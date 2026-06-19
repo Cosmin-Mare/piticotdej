@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "kicker": "Grădiniță cu program prelungit · Dej",
+    "title": "Unde fiecare zi e o nouă aventură",
+    "titleEmphasis": "nouă aventură",
+    "lead": "Un mediu cald, sigur și plin de viață, unde copiii de la 2 la 6 ani învață prin joc, descoperă lumea și își fac primii prieteni — în secțiile română și maghiară.",
+    "stats": [
+      { "value": "30+", "label": "ani de tradiție" },
+      { "value": "8", "label": "grupe educative" },
+      { "value": "2", "label": "secții lingvistice" }
+    ]
+  },
+  "intro": {
+    "kicker": "Despre noi",
+    "title": "O grădiniță cu suflet, în inima Dejului",
+    "lead": "De peste trei decenii însoțim copiii la primii pași în educație. Punem accent pe un act educațional de performanță, menit să dezvolte copii sănătoși, creativi și eficienți.",
+    "checklist": [
+      "Personal calificat și metode moderne, centrate pe copil",
+      "Trei mese calde, diversificate, pregătite zilnic",
+      "Cabinet medical și asistent medical prezent zilnic",
+      "Comunicare deschisă și constantă cu părinții"
+    ]
+  },
+  "featuresHead": {
+    "kicker": "De ce Piticot",
+    "title": "Grijă, joacă și un început frumos",
+    "lead": "Tot ce contează pentru dezvoltarea armonioasă a copilului, într-un mediu modern și prietenos."
+  },
+  "features": [
+    { "icon": "shieldCheck", "tint": "clay", "title": "Mediu sigur", "text": "Spații moderne, securizate și adaptate vârstei, cu personal atent la fiecare copil." },
+    { "icon": "spark", "tint": "sun", "title": "Învățare prin joc", "text": "Metode activ-participative și o abordare integrată care stimulează curiozitatea naturală." },
+    { "icon": "apple", "tint": "sage", "title": "Mese sănătoase", "text": "Trei mese diversificate pe zi, pregătite zilnic conform unui meniu echilibrat." },
+    { "icon": "stethoscope", "tint": "rose", "title": "Asistență medicală", "text": "Cabinet medical propriu și asistent prezent zilnic pentru sănătatea celor mici." },
+    { "icon": "chat", "tint": "sky", "title": "Secții română & maghiară", "text": "Educație în două limbi, pentru o comunitate diversă și incluzivă." },
+    { "icon": "handshake", "tint": "clay", "title": "Alături de părinți", "text": "Un parteneriat real, în care fiecare familie e aproape de copilul ei." }
+  ],
+  "groups": [
+    { "name": "Antepreșcolari", "age": "2 – 3 ani", "text": "Primii pași departe de casă, cu blândețe și răbdare.", "color": "var(--rose)", "soft": "var(--rose-soft)" },
+    { "name": "Grupa mică", "age": "3 – 4 ani", "text": "Descoperim joaca în grup și primele rutine.", "color": "var(--sun)", "soft": "var(--sun-soft)" },
+    { "name": "Grupa mijlocie", "age": "4 – 5 ani", "text": "Creativitate, mișcare și prietenii care contează.", "color": "var(--sage)", "soft": "var(--sage-soft)" },
+    { "name": "Grupa mare", "age": "5 – 6 ani", "text": "Pregătire pentru școală, cu încredere și bucurie.", "color": "var(--sky)", "soft": "var(--sky-soft)" }
+  ],
+  "day": [
+    { "time": "06:30", "what": "Primirea copiilor & joacă liberă" },
+    { "time": "08:30", "what": "Micul dejun" },
+    { "time": "09:00", "what": "Activități pe domenii experiențiale" },
+    { "time": "11:00", "what": "Joacă în aer liber / mișcare" },
+    { "time": "12:30", "what": "Prânzul" },
+    { "time": "13:00", "what": "Odihnă & somn de prânz" },
+    { "time": "15:30", "what": "Gustare & activități recreative" },
+    { "time": "17:30", "what": "Plecarea acasă" }
+  ],
+  "testimonials": [
+    { "initials": "AM", "name": "Andreea M.", "role": "mama lui David", "text": "Băiatul meu merge cu drag în fiecare dimineață. Educatoarele sunt calde și foarte implicate." },
+    { "initials": "RP", "name": "Robert P.", "role": "tatăl Mariei", "text": "Comunicarea cu grădinița e excelentă. Ne simțim mereu informați și liniștiți." },
+    { "initials": "EK", "name": "Enikő K.", "role": "mama lui Bence", "text": "Apreciem secția maghiară și grija pentru tradiții. Un loc minunat pentru copii." }
+  ],
+  "cta": {
+    "kicker": "Înscrieri deschise",
+    "title": "Locuri disponibile pentru anul școlar următor",
+    "text": "Programează o vizită și cunoaște echipa, sălile de grupă și spațiul de joacă. Te așteptăm cu drag."
+  }
+}

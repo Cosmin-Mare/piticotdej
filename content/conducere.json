@@ -1,0 +1,19 @@
+{
+  "leaders": [
+    { "initials": "D", "name": "Director", "role": "Director unitate", "desc": "Coordonează întreaga activitate educațională și administrativă a grădiniței și reprezintă instituția în relațiile cu terții." },
+    { "initials": "A", "name": "Administrator", "role": "Administrator de patrimoniu", "desc": "Asigură buna gestionare a resurselor materiale, a patrimoniului și a serviciilor de suport ale unității." }
+  ],
+  "bodies": [
+    { "icon": "building", "tint": "clay", "title": "Consiliul de Administrație", "text": "Organul de conducere care decide asupra problemelor majore ale unității, conform ROFUIP." },
+    { "icon": "users", "tint": "sky", "title": "Consiliul Profesoral", "text": "Format din cadrele didactice, dezbate aspectele pedagogice și de organizare a procesului educativ." },
+    { "icon": "doc", "tint": "sage", "title": "Comisii de lucru", "text": "Comisii pentru calitate (CEAC), securitate, protecția copilului și alte domenii specifice." }
+  ],
+  "council": [
+    { "name": "Director", "role": "Președinte", "repr": "Conducerea unității" },
+    { "name": "Cadru didactic", "role": "Membru", "repr": "Consiliul profesoral" },
+    { "name": "Cadru didactic", "role": "Membru", "repr": "Consiliul profesoral" },
+    { "name": "Reprezentant părinți", "role": "Membru", "repr": "Comitetul de părinți" },
+    { "name": "Reprezentant Consiliu Local", "role": "Membru", "repr": "Autoritatea locală" },
+    { "name": "Reprezentant Primărie", "role": "Membru", "repr": "Primăria Municipiului Dej" }
+  ]
+}

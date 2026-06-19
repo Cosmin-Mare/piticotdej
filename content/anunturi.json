@@ -1,0 +1,42 @@
+{
+  "news": [
+    {
+      "image": "/img/p2.jpg",
+      "day": "02",
+      "mon": "Iun",
+      "cat": "Înscrieri",
+      "title": "Au început înscrierile pentru anul școlar 2026–2027",
+      "text": "Locurile sunt limitate. Programează o vizită și depune dosarul de înscriere la secretariatul grădiniței sau prin formularul online."
+    },
+    {
+      "image": "/img/p3.jpg",
+      "day": "20",
+      "mon": "Mai",
+      "cat": "Eveniment",
+      "title": "Ziua porților deschise la Grădinița Piticot",
+      "text": "Părinții și copiii sunt invitați să viziteze sălile de grupă, spațiul de joacă și să cunoască echipa noastră."
+    },
+    {
+      "image": "/img/p4.jpg",
+      "day": "12",
+      "mon": "Mai",
+      "cat": "Comunicat",
+      "title": "Rezultatele evaluării interne ARACIP",
+      "text": "Raportul anual de evaluare internă a fost finalizat și este disponibil public în secțiunea Documente."
+    },
+    {
+      "image": "/img/p5.jpg",
+      "day": "28",
+      "mon": "Apr",
+      "cat": "Activitate",
+      "title": "Atelier de primăvară: plantăm împreună",
+      "text": "Copiii din toate grupele au participat la plantarea grădinii de legume, în cadrul proiectului Eco-grădinița."
+    }
+  ],
+  "pinned": [
+    "Înscrieri deschise până la 31 august 2026.",
+    "Program redus în perioada sărbătorilor legale.",
+    "Lista cu actele necesare e disponibilă la pagina Program & Grupe.",
+    "Ședință cu părinții — anunțată din timp pe e-mail."
+  ]
+}

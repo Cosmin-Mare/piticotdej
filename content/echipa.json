@@ -1,0 +1,22 @@
+{
+  "team": [
+    { "name": "Educatoare grupa mare", "role": "Profesor înv. preșcolar", "color": "linear-gradient(135deg,#e8b86a,#e0789f)", "note": "Pregătește cei mici pentru școală, cu răbdare și entuziasm." },
+    { "name": "Educatoare grupa mijlocie", "role": "Profesor înv. preșcolar", "color": "linear-gradient(135deg,#6fa3cc,#8a93d6)", "note": "Coordonează activități creative și de dezvoltare socială." },
+    { "name": "Educatoare grupa mică", "role": "Profesor înv. preșcolar", "color": "linear-gradient(135deg,#cf8fc4,#e0789f)", "note": "Însoțește copiii la primii pași în colectivitate." },
+    { "name": "Educatoare secția maghiară", "role": "Óvodapedagógus", "color": "linear-gradient(135deg,#8a93d6,#6fa3cc)", "note": "Educație și tradiții în limba maghiară." },
+    { "name": "Educatoare antepreșcolari", "role": "Profesor educație timpurie", "color": "linear-gradient(135deg,#6fa3cc,#e0789f)", "note": "Grijă specială pentru cei mai mici dintre piticoți." },
+    { "name": "Educatoare program prelungit", "role": "Profesor înv. preșcolar", "color": "linear-gradient(135deg,#e8b86a,#cf8fc4)", "note": "Activități recreative pentru orele de după-amiază." }
+  ],
+  "stats": [
+    { "n": "100%", "l": "personal calificat" },
+    { "n": "16+", "l": "cadre didactice" },
+    { "n": "8", "l": "grupe educative" },
+    { "n": "2", "l": "limbi de predare" }
+  ],
+  "support": [
+    { "i": "stethoscope", "tint": "rose", "t": "Asistent medical", "d": "Prezent zilnic, monitorizează starea de sănătate a copiilor." },
+    { "i": "apple", "tint": "sun", "t": "Personal bucătărie", "d": "Pregătește mesele calde, diversificate, în fiecare zi." },
+    { "i": "shield", "tint": "sage", "t": "Personal îngrijire", "d": "Asigură curățenia și igiena spațiilor în permanență." },
+    { "i": "doc", "tint": "sky", "t": "Personal administrativ", "d": "Susține buna organizare a activității instituției." }
+  ]
+}

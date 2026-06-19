@@ -1,0 +1,13 @@
+{
+  "name": "Grădinița Piticot",
+  "fullName": "Grădinița cu Program Prelungit „Piticot\" Dej",
+  "shortName": "Piticot Dej",
+  "tagline": "Unde fiecare zi e o nouă aventură",
+  "address": "Aleea Tomis, Nr. 2, Dej, jud. Cluj",
+  "phone": "0264 212 755",
+  "phoneHref": "tel:+40264212755",
+  "email": "gradinitapiticotdej@yahoo.com",
+  "mapsQuery": "Aleea Tomis 2, Dej, Cluj, Romania",
+  "mapsEmbed": "https://www.google.com/maps?q=Aleea+Tomis+2,+Dej,+Cluj,+Romania&output=embed",
+  "schedule": "Luni – Vineri, 06:30 – 17:30"
+}

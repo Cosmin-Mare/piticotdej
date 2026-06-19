@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Content is read/written only via Next.js server (Firebase Admin SDK).
+    // Block all direct client access.
+    match /content/{section} {
+      allow read, write: if false;
+    }
+  }
+}

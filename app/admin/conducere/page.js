@@ -1,68 +1,121 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
-import { useContentEditor, Field, SaveBar } from "@/components/admin/Editor";
+import SecondaryPageLink from "@/components/admin/SecondaryPageLink";
+import ReorderButtons from "@/components/admin/ReorderButtons";
+import VisibilityToggle from "@/components/admin/VisibilityToggle";
+import { useAuth } from "@/components/admin/AuthProvider";
+import {
+  fetchWhereOrdered,
+  swapOrdine,
+  setVisibility,
+} from "@/lib/cms/collection";
+import { logActivity } from "@/lib/cms/anunturi";
+import { createOrderedDocServer, revalidatePaths } from "@/lib/cms/collection-server";
+import { REVALIDATE } from "@/lib/cms/revalidate-paths";
+import { readAdminListCache, writeAdminListCache } from "@/lib/cms/admin-list-cache";
+
+const COLLECTION = "membri_echipa";
+const PAGINA = "conducere";
+const CACHE_KEY = `${COLLECTION}:${PAGINA}`;
 
 export default function AdminConducerePage() {
-  const { data, setData, loading, saving, save, message } = useContentEditor("conducere");
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [items, setItems] = useState(() => readAdminListCache(CACHE_KEY) || []);
+  const [loading, setLoading] = useState(() => !readAdminListCache(CACHE_KEY));
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
 
-  if (loading) return <AdminShell title="Conducere"><p>Se încarcă…</p></AdminShell>;
-  if (!data) return <AdminShell title="Conducere"><p className="admin-msg err">Eroare la încărcare.</p></AdminShell>;
+  const load = useCallback(async () => {
+    const data = await fetchWhereOrdered(COLLECTION, "pagina", PAGINA);
+    setItems(data);
+    writeAdminListCache(CACHE_KEY, data);
+    setLoading(false);
+  }, []);
 
-  function updateList(listKey, i, key, val) {
-    const list = [...data[listKey]];
-    list[i] = { ...list[i], [key]: val };
-    setData({ ...data, [listKey]: list });
-  }
+  useEffect(() => {
+    if (authLoading || !user) return;
+    load().catch(() => setError("Nu am putut încărca lista. Te rog reîncarcă pagina."));
+  }, [authLoading, user, load]);
 
-  function addCouncil() {
-    setData({
-      ...data,
-      council: [...data.council, { name: "Nume", role: "Membru", repr: "Reprezintă..." }],
-    });
-  }
-
-  function removeCouncil(i) {
-    setData({ ...data, council: data.council.filter((_, idx) => idx !== i) });
+  async function handleCreate() {
+    if (!user?.email) return;
+    setCreating(true);
+    try {
+      const id = await createOrderedDocServer(COLLECTION, {
+        nume: "", rol: "", sectie: "", poza_url: "", descriere: "",
+        vizibil: true, pagina: PAGINA,
+      });
+      void logActivity(user.email, "A adăugat un membru nou (conducere)");
+      router.push(`/admin/conducere/${id}`);
+    } catch {
+      setError("Nu am putut adăuga. Te rog încearcă din nou.");
+      setCreating(false);
+    }
   }
 
   return (
-    <AdminShell title="Conducere">
-      <div className="admin-card">
-        <h2>Conducerea instituției</h2>
-        {data.leaders.map((l, i) => (
-          <div key={i} className="admin-list-item">
-            <div className="admin-row">
-              <Field label="Inițiale" value={l.initials} onChange={(v) => updateList("leaders", i, "initials", v)} />
-              <Field label="Nume" value={l.name} onChange={(v) => updateList("leaders", i, "name", v)} />
-            </div>
-            <Field label="Funcție" value={l.role} onChange={(v) => updateList("leaders", i, "role", v)} />
-            <Field label="Descriere" value={l.desc} onChange={(v) => updateList("leaders", i, "desc", v)} multiline />
+    <AdminShell title="Conducere" backHref="/admin">
+      <p style={{ color: "var(--ink-soft)", marginTop: 0, marginBottom: 8 }}>
+        Director, adjuncți și alți membri ai conducerii — apar pe pagina Conducere. Folosește săgețile pentru ordine și „Ascunde” în loc de ștergere.
+      </p>
+      <SecondaryPageLink href="/admin/continut/conducere">
+        Editează textele paginii Conducere →
+      </SecondaryPageLink>
+      {error && <p className="admin-msg err">{error}</p>}
+      {loading && items.length === 0 ? <p>Se încarcă…</p> : (
+        <>
+          <div className="admin-list-head" style={{ marginBottom: 20 }}>
+            <span />
+            <button type="button" className="admin-btn admin-btn-primary" onClick={handleCreate} disabled={creating}>
+              {creating ? "Se creează…" : "+ Membru nou"}
+            </button>
           </div>
-        ))}
-      </div>
-
-      <div className="admin-card">
-        <div className="admin-list-head">
-          <h2 style={{ margin: 0, border: 0, padding: 0 }}>Consiliul de Administrație</h2>
-          <button type="button" className="admin-btn admin-btn-ghost" onClick={addCouncil}>+ Adaugă membru</button>
-        </div>
-        {data.council.map((c, i) => (
-          <div key={i} className="admin-list-item">
-            <div className="admin-list-head">
-              <strong>{c.name}</strong>
-              <button type="button" className="admin-btn admin-btn-danger" onClick={() => removeCouncil(i)}>Șterge</button>
+          {items.length === 0 ? (
+            <div className="admin-card"><p style={{ margin: 0, color: "var(--ink-soft)" }}>Nu există membri încă.</p></div>
+          ) : (
+            <div className="admin-card" style={{ padding: 0, overflow: "hidden" }}>
+              <ul className="admin-anunturi-list">
+                {items.map((item, i) => (
+                  <li key={item.id} className="admin-list-row">
+                    <ReorderButtons
+                      onUp={() => swapOrdine(COLLECTION, items, i, "up", user.email).then(load)}
+                      onDown={() => swapOrdine(COLLECTION, items, i, "down", user.email).then(load)}
+                      disableUp={i === 0}
+                      disableDown={i === items.length - 1}
+                    />
+                    <Link href={`/admin/conducere/${item.id}`} className="admin-anunturi-row" style={{ flex: 1, border: 0 }}>
+                      <div>
+                        <strong>{item.nume?.trim() || "Fără nume"}</strong>
+                        {item.rol && <p>{item.rol}</p>}
+                      </div>
+                      <span className={`admin-status admin-status-${item.vizibil !== false ? "publicat" : "ciorna"}`}>
+                        {item.vizibil !== false ? "Vizibil" : "Ascuns"}
+                      </span>
+                    </Link>
+                    <VisibilityToggle
+                      vizibil={item.vizibil !== false}
+                      onToggle={async () => {
+                        const next = item.vizibil === false;
+                        await setVisibility(COLLECTION, item.id, next, user.email);
+                        await logActivity(user.email, `${next ? "A afișat" : "A ascuns"}: ${item.nume || "membru"}`);
+                        await revalidatePaths(REVALIDATE.conducere);
+                        load();
+                      }}
+                    />
+                  </li>
+                ))}
+              </ul>
             </div>
-            <Field label="Membru" value={c.name} onChange={(v) => updateList("council", i, "name", v)} />
-            <div className="admin-row">
-              <Field label="Calitate" value={c.role} onChange={(v) => updateList("council", i, "role", v)} />
-              <Field label="Reprezintă" value={c.repr} onChange={(v) => updateList("council", i, "repr", v)} />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <SaveBar onSave={save} saving={saving} message={message} />
+          )}
+        </>
+      )}
     </AdminShell>
   );
 }

@@ -1,89 +1,116 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
-import { useContentEditor, Field, SaveBar } from "@/components/admin/Editor";
+import SecondaryPageLink from "@/components/admin/SecondaryPageLink";
+import { useAuth } from "@/components/admin/AuthProvider";
+import { createAnuntDraftServer } from "@/lib/cms/anunturi-server";
+import { fetchAllAnunturi, logActivity } from "@/lib/cms/anunturi";
+import { formatDataPublicare, stripHtml } from "@/lib/cms/constants";
+import { readAdminListCache, writeAdminListCache } from "@/lib/cms/admin-list-cache";
 
-export default function AdminAnunturiPage() {
-  const { data, setData, loading, saving, save, message } = useContentEditor("anunturi");
+const LIST_CACHE_KEY = "anunturi";
 
-  if (loading) return <AdminShell title="Anunțuri"><p>Se încarcă…</p></AdminShell>;
-  if (!data) return <AdminShell title="Anunțuri"><p className="admin-msg err">Eroare la încărcare.</p></AdminShell>;
+function statusLabel(status) {
+  return status === "publicat" ? "Publicat" : "Ciornă";
+}
 
-  function updateNews(i, key, val) {
-    const news = [...data.news];
-    news[i] = { ...news[i], [key]: val };
-    setData({ ...data, news });
+export default function AdminAnunturiListPage() {
+  const { user, loading: authLoading } = useAuth();
+  const [anunturi, setAnunturi] = useState(() => readAdminListCache(LIST_CACHE_KEY) || []);
+  const [loading, setLoading] = useState(() => !readAdminListCache(LIST_CACHE_KEY));
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authLoading || !user) return;
+    fetchAllAnunturi()
+      .then((data) => {
+        setAnunturi(data);
+        writeAdminListCache(LIST_CACHE_KEY, data);
+      })
+      .catch(() => setError("Nu am putut încărca anunțurile. Te rog reîncarcă pagina."))
+      .finally(() => setLoading(false));
+  }, [authLoading, user]);
+
+  async function handleCreate() {
+    if (!user?.email) return;
+    setCreating(true);
+    setError("");
+    try {
+      const id = await createAnuntDraftServer();
+      void logActivity(user.email, "A creat un anunț nou (ciornă)");
+      router.push(`/admin/anunturi/${id}`);
+    } catch {
+      setError("Nu am putut crea anunțul. Te rog încearcă din nou.");
+      setCreating(false);
+    }
   }
 
-  function addNews() {
-    setData({
-      ...data,
-      news: [
-        { image: "/img/p1.jpg", day: "01", mon: "Ian", cat: "Anunț", title: "Titlu nou", text: "Descriere..." },
-        ...data.news,
-      ],
-    });
-  }
-
-  function removeNews(i) {
-    setData({ ...data, news: data.news.filter((_, idx) => idx !== i) });
-  }
-
-  function updatePinned(i, val) {
-    const pinned = [...data.pinned];
-    pinned[i] = val;
-    setData({ ...data, pinned });
-  }
-
-  function addPinned() {
-    setData({ ...data, pinned: [...data.pinned, "Anunț nou"] });
-  }
-
-  function removePinned(i) {
-    setData({ ...data, pinned: data.pinned.filter((_, idx) => idx !== i) });
+  if (authLoading || (loading && anunturi.length === 0)) {
+    return <AdminShell title="Anunțuri"><p>Se încarcă…</p></AdminShell>;
   }
 
   return (
     <AdminShell title="Anunțuri">
-      <div className="admin-card">
-        <div className="admin-list-head">
-          <h2 style={{ margin: 0, border: 0, padding: 0 }}>Articole</h2>
-          <button type="button" className="admin-btn admin-btn-ghost" onClick={addNews}>+ Adaugă articol</button>
-        </div>
-        {data.news.map((n, i) => (
-          <div key={i} className="admin-list-item">
-            <div className="admin-list-head">
-              <strong>{n.title || `Articol ${i + 1}`}</strong>
-              <button type="button" className="admin-btn admin-btn-danger" onClick={() => removeNews(i)}>Șterge</button>
-            </div>
-            <div className="admin-row">
-              <Field label="Zi" value={n.day} onChange={(v) => updateNews(i, "day", v)} />
-              <Field label="Lună" value={n.mon} onChange={(v) => updateNews(i, "mon", v)} />
-            </div>
-            <Field label="Categorie" value={n.cat} onChange={(v) => updateNews(i, "cat", v)} />
-            <Field label="Titlu" value={n.title} onChange={(v) => updateNews(i, "title", v)} />
-            <Field label="Text" value={n.text} onChange={(v) => updateNews(i, "text", v)} multiline />
-            <Field label="Imagine (cale, ex: /img/p2.jpg)" value={n.image} onChange={(v) => updateNews(i, "image", v)} />
-          </div>
-        ))}
+      <p style={{ color: "var(--ink-soft)", marginTop: 0, marginBottom: 8 }}>
+        Aici poți scrie și publica anunțurile care apar pe site. Modificările salvate ca ciornă nu sunt vizibile public până apeși „Publică”.
+      </p>
+      <SecondaryPageLink href="/admin/continut/anunturi">
+        Editează antetul paginii și anunțurile fixe din sidebar →
+      </SecondaryPageLink>
+
+      {error && <p className="admin-msg err">{error}</p>}
+
+      <div className="admin-list-head" style={{ marginBottom: 20 }}>
+        <span />
+        <button
+          type="button"
+          className="admin-btn admin-btn-primary"
+          onClick={handleCreate}
+          disabled={creating}
+        >
+          {creating ? "Se creează…" : "+ Anunț nou"}
+        </button>
       </div>
 
-      <div className="admin-card">
-        <div className="admin-list-head">
-          <h2 style={{ margin: 0, border: 0, padding: 0 }}>Anunțuri importante (sidebar)</h2>
-          <button type="button" className="admin-btn admin-btn-ghost" onClick={addPinned}>+ Adaugă</button>
+      {anunturi.length === 0 ? (
+        <div className="admin-card">
+          <p style={{ margin: 0, color: "var(--ink-soft)" }}>
+            Nu există anunțuri încă. Apasă „Anunț nou” pentru a începe.
+          </p>
         </div>
-        {data.pinned.map((p, i) => (
-          <div key={i} className="admin-list-item" style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-            <div style={{ flex: 1 }}>
-              <Field label={`Anunț ${i + 1}`} value={p} onChange={(v) => updatePinned(i, v)} />
-            </div>
-            <button type="button" className="admin-btn admin-btn-danger" onClick={() => removePinned(i)} style={{ marginTop: 24 }}>Șterge</button>
-          </div>
-        ))}
-      </div>
-
-      <SaveBar onSave={save} saving={saving} message={message} />
+      ) : (
+        <div className="admin-card" style={{ padding: 0, overflow: "hidden" }}>
+          <ul className="admin-anunturi-list">
+            {anunturi.map((a) => {
+              const date = a.data_publicare ? formatDataPublicare(a.data_publicare) : null;
+              const preview = stripHtml(a.continut).slice(0, 80);
+              return (
+                <li key={a.id}>
+                  <Link href={`/admin/anunturi/${a.id}`} className="admin-anunturi-row">
+                    <div>
+                      <strong>{a.titlu?.trim() || "Anunț fără titlu"}</strong>
+                      {preview && <p>{preview}{preview.length >= 80 ? "…" : ""}</p>}
+                    </div>
+                    <div className="admin-anunturi-meta">
+                      <span className={`admin-status admin-status-${a.status}`}>
+                        {statusLabel(a.status)}
+                      </span>
+                      {date && <span>{date.day} {date.mon}</span>}
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </AdminShell>
   );
 }

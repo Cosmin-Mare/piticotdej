@@ -4,7 +4,9 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import LocalBusinessJsonLd from "@/components/LocalBusinessJsonLd";
 import { getSiteConfig } from "@/lib/content";
+import { buildSiteMetadata } from "@/lib/seo";
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
@@ -23,30 +25,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export async function generateMetadata() {
   const site = await getSiteConfig();
-  return {
-    title: {
-      default: site.fullName,
-      template: `%s · ${site.name}`,
-    },
-    description:
-      "Grădiniță cu program prelungit în Dej — educație de calitate, mediu sigur și cald pentru copii de la 2 la 6 ani. Secții română și maghiară.",
-    keywords: [
-      "grădiniță Dej",
-      "Piticot",
-      "program prelungit",
-      "educație timpurie",
-      "grădiniță Cluj",
-    ],
-    icons: {
-      icon: "/favicon-orig.png",
-      apple: "/favicon-orig.png",
-    },
-    openGraph: {
-      title: site.fullName,
-      description: "Unde fiecare zi e o nouă aventură. Grădiniță cu program prelungit în Dej.",
-      type: "website",
-    },
-  };
+  return buildSiteMetadata(site);
 }
 
 export default function RootLayout({ children }) {
@@ -55,6 +34,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ro" className={`${fraunces.variable} ${jakarta.variable}`}>
       <body>
+        {!isAdmin && <LocalBusinessJsonLd />}
         {!isAdmin && <a href="#main" className="skip-link">Sari la conținut</a>}
         {!isAdmin && <Navbar />}
         <main id={isAdmin ? undefined : "main"}>{children}</main>

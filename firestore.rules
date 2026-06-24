@@ -2,10 +2,349 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Content is read/written only via Next.js server (Firebase Admin SDK).
-    // Block all direct client access.
-    match /content/{section} {
-      allow read, write: if false;
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return isSignedIn() ? request.auth.token.role : null;
+    }
+
+    function isAdmin() {
+      return role() == 'admin';
+    }
+
+    function isEditor() {
+      return role() == 'admin' || role() == 'editor';
+    }
+
+    function isNonEmptyString(field) {
+      return field is string && field.size() > 0;
+    }
+
+    function hasOnlyKeys(data, allowed) {
+      return data.keys().hasOnly(allowed);
+    }
+
+    function validTimestamp(field) {
+      return field == null || field is timestamp;
+    }
+
+    function optionalHttpsUrl(field) {
+      return field == null
+        || field == ''
+        || (field is string
+          && field.size() <= 2048
+          && field.matches('https://[^\\s]+'));
+    }
+
+    function optionalMapsEmbed(field) {
+      return field == null
+        || field == ''
+        || (field is string
+          && field.size() <= 2048
+          && (field.matches('https://www\\.google\\.com/maps/embed.*')
+            || field.matches('https://google\\.com/maps/embed.*')));
+    }
+
+    // ── Users (admin-only management) ────────────────────────────────────────
+
+    match /users/{userId} {
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ── Site settings (editors CANNOT write) ─────────────────────────────────
+
+    match /site_settings/main {
+      allow read: if true;
+
+      allow create, update: if isAdmin()
+        && hasOnlyKeys(request.resource.data, [
+          'telefon', 'email', 'adresa', 'program_orar',
+          'ani_traditie', 'nr_grupe', 'nr_sectii',
+          'nume_complet', 'nume_scurt', 'tagline', 'meta_description',
+          'descriere_footer', 'text_credit', 'text_credit_url',
+          'maps_query', 'maps_embed',
+          'updatedBy', 'updatedAt'
+        ])
+        && isNonEmptyString(request.resource.data.telefon)
+        && isNonEmptyString(request.resource.data.email)
+        && optionalHttpsUrl(request.resource.data.text_credit_url)
+        && optionalMapsEmbed(request.resource.data.maps_embed)
+        && request.resource.data.updatedBy == request.auth.token.email
+        && request.resource.data.updatedAt is timestamp;
+
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Anunțuri ─────────────────────────────────────────────────────────────
+
+    function validAnunt(data) {
+      return hasOnlyKeys(data, [
+        'titlu', 'continut', 'imagine_url', 'data_publicare',
+        'status', 'updatedBy', 'updatedAt'
+      ])
+      && data.status in ['ciorna', 'publicat']
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp
+      && validTimestamp(data.data_publicare)
+      && (data.titlu == null || (data.titlu is string && data.titlu.size() <= 500))
+      && (data.continut == null || (data.continut is string && data.continut.size() <= 50000))
+      && (data.imagine_url == null || (data.imagine_url is string && data.imagine_url.size() <= 2048));
+    }
+
+    function validAnuntPublish(data) {
+      return data.status == 'publicat'
+        && isNonEmptyString(data.titlu)
+        && isNonEmptyString(data.continut)
+        && data.data_publicare is timestamp;
+    }
+
+    match /anunturi/{anuntId} {
+      allow read: if resource.data.status == 'publicat' || isEditor();
+
+      allow create: if isEditor()
+        && validAnunt(request.resource.data)
+        && request.resource.data.status == 'ciorna';
+
+      allow update: if isEditor()
+        && validAnunt(request.resource.data)
+        && (
+          request.resource.data.status == 'ciorna'
+          || validAnuntPublish(request.resource.data)
+        );
+
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Membri echipă ────────────────────────────────────────────────────────
+
+    function validMembru(data) {
+      return hasOnlyKeys(data, [
+        'nume', 'rol', 'sectie', 'poza_url', 'descriere',
+        'ordine', 'vizibil', 'pagina', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.nume)
+      && data.pagina in ['conducere', 'echipa']
+      && data.ordine is int
+      && data.vizibil is bool
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /membri_echipa/{docId} {
+      allow read: if resource.data.vizibil == true || isEditor();
+      allow create, update: if isEditor() && validMembru(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Membri consiliu ──────────────────────────────────────────────────────
+
+    function validMembruConsiliu(data) {
+      return hasOnlyKeys(data, [
+        'nume', 'calitate', 'reprezinta', 'poza_url',
+        'ordine', 'vizibil', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.nume)
+      && data.ordine is int
+      && data.vizibil is bool
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /membri_consiliu/{docId} {
+      allow read: if resource.data.vizibil == true || isEditor();
+      allow create, update: if isEditor() && validMembruConsiliu(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Galerie poze ─────────────────────────────────────────────────────────
+
+    function validGalerie(data) {
+      return hasOnlyKeys(data, [
+        'url', 'descriere', 'ordine', 'vizibil', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.url)
+      && data.ordine is int
+      && data.vizibil is bool
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /galerie_poze/{docId} {
+      allow read: if resource.data.vizibil == true || isEditor();
+      allow create, update: if isEditor() && validGalerie(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Documente ────────────────────────────────────────────────────────────
+
+    function validDocument(data) {
+      return hasOnlyKeys(data, [
+        'titlu', 'fisier_url', 'categorie', 'ordine', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.titlu)
+      && isNonEmptyString(data.fisier_url)
+      && data.ordine is int
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /documente/{docId} {
+      allow read: if isEditor() || true;
+      allow create, update: if isEditor() && validDocument(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Grupe ────────────────────────────────────────────────────────────────
+
+    function validGrupa(data) {
+      return hasOnlyKeys(data, [
+        'varsta', 'nume', 'descriere', 'ordine', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.nume)
+      && data.ordine is int
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /grupe/{docId} {
+      allow read: if true;
+      allow create, update: if isEditor() && validGrupa(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Program zilnic ───────────────────────────────────────────────────────
+
+    function validProgramZilnic(data) {
+      return hasOnlyKeys(data, [
+        'ora', 'activitate', 'ordine', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.ora)
+      && isNonEmptyString(data.activitate)
+      && data.ordine is int
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /program_zilnic/{docId} {
+      allow read: if true;
+      allow create, update: if isEditor() && validProgramZilnic(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Testimoniale ─────────────────────────────────────────────────────────
+
+    function validTestimonial(data) {
+      return hasOnlyKeys(data, [
+        'text', 'nume', 'relatie', 'vizibil', 'updatedBy', 'updatedAt'
+      ])
+      && isNonEmptyString(data.text)
+      && isNonEmptyString(data.nume)
+      && data.vizibil is bool
+      && data.updatedBy == request.auth.token.email
+      && data.updatedAt is timestamp;
+    }
+
+    match /testimoniale/{docId} {
+      allow read: if resource.data.vizibil == true || isEditor();
+      allow create, update: if isEditor() && validTestimonial(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Page content (static page copy) ────────────────────────────────────
+
+    function validPageContent(data) {
+      return data.updatedBy == request.auth.token.email
+        && data.updatedAt is timestamp
+        && isNonEmptyString(data.updatedBy)
+        && data.size() <= 80;
+    }
+
+    match /continut_pagini/{pageId} {
+      allow read: if true;
+
+      allow create, update: if isEditor()
+        && pageId in [
+          'acasa', 'conducere', 'echipa', 'anunturi', 'despre',
+          'activitati', 'proiecte', 'program', 'inscrieri', 'galerie', 'documente', 'gdpr', 'contact'
+        ]
+        && validPageContent(request.resource.data);
+
+      allow delete: if isAdmin();
+
+      match /versions/{versionId} {
+        allow read: if isEditor();
+        allow write: if false;
+      }
+    }
+
+    // ── Contact messages (server-written via Admin SDK; admins read in console) ─
+
+    match /contact_messages/{messageId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ── Activity log (append-only for editors) ───────────────────────────────
+
+    match /activity_log/{logId} {
+      allow read: if isEditor();
+      allow create: if isEditor()
+        && hasOnlyKeys(request.resource.data, ['userEmail', 'actiune', 'createdAt'])
+        && request.resource.data.userEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.actiune)
+        && request.resource.data.createdAt is timestamp;
+      allow update, delete: if false;
     }
   }
 }

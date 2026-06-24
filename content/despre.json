@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "kicker": "Prezentarea unității",
+    "title": "O grădiniță cu suflet, în inima Dejului",
+    "lead": "Istoria, misiunea și valorile care ne ghidează în fiecare zi alături de copii."
+  },
+  "intro": {
+    "kicker": "Cine suntem",
+    "title": "Un loc unde copilăria e luată în serios",
+    "paragraphs": [
+      "Grădinița cu Program Prelungit „Piticot\" Dej este o instituție de învățământ preșcolar de stat, dedicată educației timpurii de calitate pentru copiii cu vârste între 2 și 6 ani. Cu o tradiție de peste trei decenii în comunitatea dejeană, am crescut generații întregi de copii într-un mediu cald, sigur și stimulativ.",
+      "Funcționăm cu grupe în secțiile română și maghiară, oferind atât program prelungit, cât și program normal. Punem accent pe un act educațional de performanță, menit să dezvolte copii sănătoși, creativi și eficienți.",
+      "Abordarea noastră este holistică și integrată: îmbinăm metode moderne, activ-participative, cu grija pentru nevoile emoționale ale fiecărui copil."
+    ]
+  },
+  "facts": [
+    { "num": "30+", "label": "ani de experiență" },
+    { "num": "8", "label": "grupe educative" },
+    { "num": "RO & HU", "label": "două secții" },
+    { "num": "06:30–17:30", "label": "program prelungit" }
+  ],
+  "pillars": [
+    { "icon": "target", "tint": "clay", "title": "Misiunea noastră", "text": "Să oferim fiecărui copil un start educațional solid, într-un mediu sigur și afectuos, care încurajează curiozitatea, autonomia și bucuria de a învăța." },
+    { "icon": "star", "tint": "sun", "title": "Viziunea noastră", "text": "O grădiniță reper în comunitate, unde excelența educațională se întâlnește cu grija autentică pentru dezvoltarea armonioasă a fiecărui copil." },
+    { "icon": "book", "tint": "sage", "title": "Istoricul nostru", "text": "De peste 30 de ani însoțim copiii din Dej la primii pași în educație, adaptându-ne continuu la nevoile fiecărei generații." }
+  ],
+  "valuesHead": {
+    "kicker": "Valorile noastre",
+    "title": "Principiile care ne ghidează"
+  },
+  "values": [
+    { "icon": "heart", "title": "Grijă & siguranță", "text": "Binele și securitatea copilului sunt mereu pe primul loc." },
+    { "icon": "palette", "title": "Creativitate", "text": "Încurajăm imaginația și exprimarea liberă prin joc și artă." },
+    { "icon": "users", "title": "Respect & incluziune", "text": "Fiecare copil și familie sunt primiți cu căldură, indiferent de origine." },
+    { "icon": "leaf", "title": "Dezvoltare armonioasă", "text": "Sprijinim creșterea fizică, emoțională, socială și cognitivă." },
+    { "icon": "book", "title": "Educație de calitate", "text": "Personal calificat și metode moderne, centrate pe copil." },
+    { "icon": "building", "title": "Comunitate", "text": "Construim împreună cu părinții o a doua familie pentru copii." }
+  ],
+  "band": {
+    "title": "Vrei să ne cunoști mai bine?",
+    "text": "Echipa, conducerea și documentele instituției sunt la un click distanță."
+  }
+}

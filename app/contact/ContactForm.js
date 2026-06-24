@@ -1,11 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
+import { sanitizeFormNoteHtml } from "@/lib/sanitize";
 
-export default function ContactForm({ site }) {
+export default function ContactForm({ site, page }) {
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const formNoteHtml = useMemo(
+    () =>
+      sanitizeFormNoteHtml(
+        (page.formNote || "").replace(
+          /politicii de confidențialitate/g,
+          '<a href="/gdpr">politicii de confidențialitate</a>'
+        )
+      ),
+    [page.formNote]
+  );
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(body.error || "Nu am putut trimite mesajul. Te rog încearcă din nou.");
+        return;
+      }
+      setSent(true);
+      form.reset();
+    } catch {
+      setError("Nu am putut trimite mesajul. Verifică conexiunea la internet.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   const info = [
     { icon: "pin", tint: "clay", label: "Adresă", value: site.address, href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.mapsQuery)}`, ext: true },
@@ -18,9 +60,10 @@ export default function ContactForm({ site }) {
     <>
       <PageHero
         crumb="Contact"
-        kicker="Ia legătura cu noi"
-        title="Contact & înscrieri"
-        lead="Te așteptăm cu drag să ne cunoști. Scrie-ne, sună-ne sau vino într-o vizită — răspundem cu plăcere la orice întrebare."
+        crumbPath="/contact"
+        kicker={page.hero.kicker}
+        title={page.hero.title}
+        lead={page.hero.lead}
       />
 
       <section className="section">
@@ -44,57 +87,56 @@ export default function ContactForm({ site }) {
                 src={site.mapsEmbed}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
+                sandbox="allow-scripts allow-same-origin allow-popups"
               />
             </div>
           </div>
 
           <div className="form-wrap reveal">
-            <h2>Trimite-ne un mesaj</h2>
-            <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>
-              Completează formularul și revenim cât mai curând.
-            </p>
+            <h2>{page.formTitle}</h2>
+            <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>{page.formLead}</p>
             {sent ? (
               <div className="thanks">
                 <span className="ico sage" style={{ margin: "0 auto 16px", width: 64, height: 64 }}><Icon name="check" size={32} /></span>
-                <h3>Mulțumim!</h3>
-                <p>Mesajul tău a fost trimis. Te vom contacta în curând.</p>
+                <h3>{page.thanksTitle}</h3>
+                <p>{page.thanksText}</p>
               </div>
             ) : (
-              <form className="form" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+              <form className="form" onSubmit={handleSubmit}>
                 <div className="field">
-                  <label htmlFor="nume">Nume și prenume</label>
+                  <label htmlFor="nume">{page.fields.name}</label>
                   <input id="nume" name="nume" required placeholder="Ex: Maria Popescu" />
                 </div>
                 <div className="row">
                   <div className="field">
-                    <label htmlFor="email">E-mail</label>
+                    <label htmlFor="email">{page.fields.email}</label>
                     <input id="email" name="email" type="email" required placeholder="adresa@email.ro" />
                   </div>
                   <div className="field">
-                    <label htmlFor="tel">Telefon</label>
+                    <label htmlFor="tel">{page.fields.phone}</label>
                     <input id="tel" name="tel" type="tel" placeholder="07xx xxx xxx" />
                   </div>
                 </div>
                 <div className="field">
-                  <label htmlFor="subiect">Subiect</label>
+                  <label htmlFor="subiect">{page.fields.subject}</label>
                   <select id="subiect" name="subiect">
-                    <option>Înscriere copil</option>
-                    <option>Programare vizită</option>
-                    <option>Informații program</option>
-                    <option>Altă întrebare</option>
+                    {page.subjects.map((s) => (
+                      <option key={s}>{s}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="field">
-                  <label htmlFor="mesaj">Mesaj</label>
+                  <label htmlFor="mesaj">{page.fields.message}</label>
                   <textarea id="mesaj" name="mesaj" rows={5} required placeholder="Cum te putem ajuta?" />
                 </div>
-                <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>
-                  Trimite mesajul <Icon name="arrow" />
+                <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={submitting}>
+                  {submitting ? "Se trimite…" : page.fields.submit} {!submitting && <Icon name="arrow" />}
                 </button>
-                <p className="form-note">
-                  Prin trimiterea formularului ești de acord cu prelucrarea datelor conform{" "}
-                  <a href="/gdpr">politicii de confidențialitate</a>.
-                </p>
+                {error && <p className="form-error">{error}</p>}
+                <p
+                  className="form-note"
+                  dangerouslySetInnerHTML={{ __html: formNoteHtml }}
+                />
               </form>
             )}
           </div>
@@ -120,6 +162,7 @@ export default function ContactForm({ site }) {
         .field textarea { resize: vertical; }
         .form-note { font-size: 0.82rem; color: var(--muted); margin: 0; text-align: center; }
         .form-note a { color: var(--clay-deep); font-weight: 500; }
+        .form-error { color: #b42318; font-size: 0.9rem; margin: 0; text-align: center; }
         .thanks { text-align: center; padding: 40px 10px; }
         @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
         @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }

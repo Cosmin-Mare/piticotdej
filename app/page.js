@@ -2,20 +2,28 @@ import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
 import { getSiteConfig } from "@/lib/content";
-import { getContent } from "@/lib/content";
+import { fetchPageContentServer } from "@/lib/cms/page-content-server";
+import {
+  getPublicHomeGroups,
+  getPublicHomeDay,
+  getPublicHomeTestimonialsWithFallback,
+  getPublicGaleriePoze,
+} from "@/lib/cms/public-data";
 
 import hero from "@/public/img/hands.jpg";
 import building from "@/public/img/building.jpg";
-import p1 from "@/public/img/p1.jpg";
-import p7 from "@/public/img/p7.jpg";
 import p13 from "@/public/img/p13.jpg";
-import p10 from "@/public/img/p10.jpg";
-import p16 from "@/public/img/p16.jpg";
+
+export const revalidate = 60;
 
 export default async function Home() {
   const site = await getSiteConfig();
-  const content = await getContent("home");
-  const { hero: heroContent, intro, featuresHead, features, groups, day, testimonials, cta } = content;
+  const content = await fetchPageContentServer("acasa");
+  const { hero: heroContent, intro, featuresHead, features, sectiuni, cta } = content;
+  const groups = await getPublicHomeGroups();
+  const day = await getPublicHomeDay();
+  const testimonials = await getPublicHomeTestimonialsWithFallback();
+  const galleryPhotos = (await getPublicGaleriePoze()).slice(0, 4);
   const titleBefore = heroContent.title.replace(heroContent.titleEmphasis, "").trim();
 
   return (
@@ -31,7 +39,7 @@ export default async function Home() {
             </h1>
             <p className="lead">{heroContent.lead}</p>
             <div className="hero-cta">
-              <Link href="/contact" className="btn btn-primary">
+              <Link href="/inscrieri" className="btn btn-primary">
                 Înscrie-ți copilul <Icon name="arrow" />
               </Link>
               <Link href="/despre" className="btn btn-ghost">Descoperă grădinița</Link>
@@ -48,14 +56,14 @@ export default async function Home() {
 
           <div className="hero-media">
             <div className="photo hero-photo">
-              <Image src={hero} alt="Copil bucuros la grădiniță" priority placeholder="blur" />
+              <Image src={hero} alt="Copil bucuros la Grădinița Piticot Dej" priority placeholder="blur" />
             </div>
             <div className="hero-badge">
               <span className="ico sage" style={{ margin: 0, width: 44, height: 44, borderRadius: 12 }}>
                 <Icon name="clock" size={22} />
               </span>
               <div>
-                <strong>Program prelungit</strong>
+                <strong>{content.heroBadge.title}</strong>
                 <small>{site.schedule}</small>
               </div>
             </div>
@@ -68,10 +76,10 @@ export default async function Home() {
         <div className="container intro-grid">
           <div className="intro-media reveal">
             <div className="photo im-main">
-              <Image src={building} alt="Clădirea grădiniței Piticot" />
+              <Image src={building} alt="Clădirea Grădiniței Piticot Dej" />
             </div>
             <div className="photo im-sub">
-              <Image src={p13} alt="Sală de grupă" />
+              <Image src={p13} alt="Sală de grupă la Grădinița Piticot Dej" />
             </div>
           </div>
           <div className="reveal">
@@ -115,8 +123,8 @@ export default async function Home() {
         <div className="container">
           <div className="groups-head reveal">
             <div>
-              <span className="kicker">Grupele noastre</span>
-              <h2>O grupă pentru fiecare etapă</h2>
+              <span className="kicker">{sectiuni.grupe.kicker}</span>
+              <h2>{sectiuni.grupe.title}</h2>
             </div>
             <Link href="/program" className="btn btn-ghost">Vezi programul <Icon name="arrow" /></Link>
           </div>
@@ -133,34 +141,37 @@ export default async function Home() {
       </section>
 
       {/* ===================== GALLERY STRIP ===================== */}
+      {galleryPhotos.length > 0 && (
       <section className="section bg-sand">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Viața la grădiniță</span>
-            <h2>Momente pline de culoare</h2>
+            <span className="kicker center">{sectiuni.galerie.kicker}</span>
+            <h2>{sectiuni.galerie.title}</h2>
           </div>
           <div className="gstrip reveal">
-            <div className="photo gs-tall"><Image src={p1} alt="Activitate în sala de grupă" /></div>
-            <div className="photo"><Image src={p7} alt="Activitate tematică" /></div>
-            <div className="photo"><Image src={p10} alt="Joacă și învățare" /></div>
-            <div className="photo gs-wide"><Image src={p16} alt="Eveniment la grădiniță" /></div>
+            {galleryPhotos.map((p, i) => (
+              <div
+                key={`${p.src}-${i}`}
+                className={`photo${i === 0 ? " gs-tall" : ""}${i === galleryPhotos.length - 1 && galleryPhotos.length >= 3 ? " gs-wide" : ""}`}
+              >
+                <Image src={p.src} alt={p.label || "Fotografie Grădinița Piticot Dej"} width={640} height={480} sizes="(max-width:600px) 50vw, 33vw" />
+              </div>
+            ))}
           </div>
           <div style={{ textAlign: "center", marginTop: 36 }} className="reveal">
             <Link href="/galerie" className="btn btn-light">Vezi galeria completă <Icon name="arrow" /></Link>
           </div>
         </div>
       </section>
+      )}
 
       {/* ===================== A DAY ===================== */}
       <section className="section">
         <div className="container daygrid">
           <div className="reveal">
-            <span className="kicker">O zi la Piticot</span>
-            <h2>Rutina care le dă siguranță</h2>
-            <p className="lead">
-              O zi echilibrată, cu joacă liberă, activități tematice, mese sănătoase
-              și odihnă — gândită cu grijă de educatoarele noastre.
-            </p>
+            <span className="kicker">{sectiuni.zi.kicker}</span>
+            <h2>{sectiuni.zi.title}</h2>
+            <p className="lead">{sectiuni.zi.lead}</p>
             <Link href="/activitati" className="btn btn-ghost" style={{ marginTop: 6 }}>
               Toate activitățile <Icon name="arrow" />
             </Link>
@@ -181,8 +192,8 @@ export default async function Home() {
       <section className="section bg-sand">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Părinții spun</span>
-            <h2>Familii fericite, copii care înfloresc</h2>
+            <span className="kicker center">{sectiuni.testimoniale.kicker}</span>
+            <h2>{sectiuni.testimoniale.title}</h2>
           </div>
           <div className="grid grid-3">
             {testimonials.map((t) => (

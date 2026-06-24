@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEditor() {
+      return isSignedIn()
+        && request.auth.token.role in ['admin', 'editor'];
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    function isImageUpload() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size <= 15 * 1024 * 1024;
+    }
+
+    function isPdfUpload() {
+      return request.resource.contentType == 'application/pdf'
+        && request.resource.size <= 15 * 1024 * 1024;
+    }
+
+    function isProcessedWebp(fileName) {
+      return fileName.matches('400\\.webp')
+        || fileName.matches('800\\.webp')
+        || fileName.matches('1200\\.webp');
+    }
+
+    // Client uploads PDFs for the documente collection.
+    match /uploads/documente/{docId}/document.pdf {
+      allow read: if true;
+      allow create, update: if isEditor() && isPdfUpload();
+      allow delete: if isAdmin();
+    }
+
+    // Client uploads original.jpg; Cloud Function writes 400/800/1200.webp via Admin SDK.
+    match /uploads/{collection}/{docId}/{fileName} {
+      allow read: if fileName == 'original.jpg' || isProcessedWebp(fileName);
+
+      allow create, update: if fileName == 'original.jpg'
+        && isEditor()
+        && isImageUpload();
+
+      allow delete: if isAdmin();
+    }
+
+    // Nightly Firestore backups — Admin SDK only (Cloud Function).
+    match /backups/{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

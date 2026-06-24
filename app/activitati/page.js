@@ -1,29 +1,36 @@
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
 import culture from "@/public/img/p7.jpg";
+import { fetchPageContentServer } from "@/lib/cms/page-content-server";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Activități" };
+export const metadata = pageMetadata("activitati");
 
-export default function Activitati() {
+export const revalidate = 60;
+
+export default async function Activitati() {
+  const { hero, domains, extrasHead, extras, eventsHead, events } = await fetchPageContentServer("activitati");
+
   return (
     <>
       <PageHero
         crumb="Activități"
-        kicker="Domenii experiențiale"
-        title="Activități care aprind curiozitatea"
-        lead="Învățăm prin joc, mișcare, artă și descoperire — un program echilibrat care dezvoltă fiecare latură a copilului."
+        crumbPath="/activitati"
+        kicker={hero.kicker}
+        title={hero.title}
+        lead={hero.lead}
         image={culture}
-        imageAlt="Copii în activitate tematică"
+        imageAlt="Copii în activitate tematică la Grădinița Piticot Dej"
       />
 
       <section className="section">
         <div className="container">
           <div className="grid grid-3">
             {domains.map((d, i) => (
-              <article key={d.t} className="card reveal" style={{ transitionDelay: `${i * 50}ms` }}>
-                <div className={`ico ${d.tint}`}><Icon name={d.i} /></div>
-                <h3>{d.t}</h3>
-                <p style={{ color: "var(--ink-soft)", margin: 0 }}>{d.d}</p>
+              <article key={`${d.title}-${i}`} className="card reveal" style={{ transitionDelay: `${i * 50}ms` }}>
+                <div className={`ico ${d.tint}`}><Icon name={d.icon} /></div>
+                <h3>{d.title}</h3>
+                <p style={{ color: "var(--ink-soft)", margin: 0 }}>{d.text}</p>
               </article>
             ))}
           </div>
@@ -33,15 +40,15 @@ export default function Activitati() {
       <section className="section bg-sand">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Activități opționale</span>
-            <h2>Mai mult decât o zi obișnuită</h2>
-            <p className="lead">Activități extracurriculare care îmbogățesc experiența celor mici (în funcție de grupă și opțiuni).</p>
+            <span className="kicker center">{extrasHead.kicker}</span>
+            <h2>{extrasHead.title}</h2>
+            <p className="lead">{extrasHead.lead}</p>
           </div>
           <div className="grid grid-4">
-            {extras.map((e) => (
-              <div key={e.t} className="extra reveal">
-                <span className="extra-ico"><Icon name={e.i} size={24} /></span>
-                <strong>{e.t}</strong>
+            {extras.map((e, i) => (
+              <div key={`${e.title}-${i}`} className="extra reveal">
+                <span className="extra-ico"><Icon name={e.icon} size={24} /></span>
+                <strong>{e.title}</strong>
               </div>
             ))}
           </div>
@@ -51,16 +58,16 @@ export default function Activitati() {
       <section className="section">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Calendar</span>
-            <h2>Evenimente de peste an</h2>
+            <span className="kicker center">{eventsHead.kicker}</span>
+            <h2>{eventsHead.title}</h2>
           </div>
           <div className="events reveal">
-            {events.map((e) => (
-              <div key={e.t} className="event">
+            {events.map((e, i) => (
+              <div key={`${e.title}-${i}`} className="event">
                 <div className="event-when">{e.when}</div>
                 <div className="event-body">
-                  <h3>{e.t}</h3>
-                  <p>{e.d}</p>
+                  <h3>{e.title}</h3>
+                  <p>{e.text}</p>
                 </div>
               </div>
             ))}
@@ -83,30 +90,3 @@ export default function Activitati() {
     </>
   );
 }
-
-const domains = [
-  { i: "chat", tint: "clay", t: "Limbă și comunicare", d: "Povești, poezii și jocuri de vocabular care dezvoltă exprimarea liberă." },
-  { i: "compass", tint: "sky", t: "Științe & matematică", d: "Numere, forme și mici experimente care explică lumea prin joc." },
-  { i: "palette", tint: "rose", t: "Arte & creativitate", d: "Desen, pictură, modelaj și colaje pentru imaginație fără limite." },
-  { i: "music", tint: "sun", t: "Muzică & ritm", d: "Cântece, dans și instrumente care bucură și calmează." },
-  { i: "run", tint: "sage", t: "Educație fizică", d: "Mișcare, jocuri sportive și coordonare pentru un corp sănătos." },
-  { i: "globe", tint: "clay", t: "Om și societate", d: "Reguli, emoții și relații — primele lecții despre a trăi împreună." },
-];
-
-const extras = [
-  { i: "globe", t: "Limba engleză" },
-  { i: "music", t: "Dans" },
-  { i: "chat", t: "Teatru & roluri" },
-  { i: "spark", t: "Joc educativ digital" },
-  { i: "leaf", t: "Mișcare & natură" },
-  { i: "palette", t: "Atelier de artă" },
-  { i: "book", t: "Ateliere de lectură" },
-  { i: "heart", t: "Educație emoțională" },
-];
-
-const events = [
-  { when: "Septembrie", t: "Bun venit la grădiniță!", d: "Zile de acomodare și cunoaștere a noilor prieteni și educatoare." },
-  { when: "Decembrie", t: "Serbarea de Crăciun", d: "Spectacole, colinde și vizita lui Moș Crăciun pentru fiecare grupă." },
-  { when: "Martie", t: "Mărțișor & Ziua Mamei", d: "Ateliere de creație și surprize pregătite cu drag pentru părinți." },
-  { when: "Iunie", t: "Serbarea de absolvire", d: "Grupa mare își ia rămas bun, gata de școală, într-o zi de sărbătoare." },
-];

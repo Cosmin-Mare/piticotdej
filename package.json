@@ -7,16 +7,31 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:firebase": "node scripts/seed-firestore.mjs"
+    "seed:firebase": "node scripts/seed-firestore.mjs",
+    "seed:site": "node scripts/seed-site-settings.mjs",
+    "setup:backup-bucket": "node scripts/setup-backup-bucket.mjs",
+    "test:backup": "node scripts/test-backup.mjs",
+    "set-role": "node scripts/set-user-role.mjs",
+    "set-password": "node scripts/set-user-password.mjs"
   },
   "dependencies": {
+    "@tiptap/extension-link": "^2.11.5",
+    "@tiptap/pm": "^2.11.5",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
+    "browser-image-compression": "^2.0.2",
     "firebase": "^12.14.0",
     "firebase-admin": "^14.0.0",
-    "next": "14.2.5",
+    "isomorphic-dompurify": "^3.18.0",
+    "jose": "^6.2.3",
+    "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "dotenv": "^17.4.2"
+    "@google-cloud/storage": "^7.15.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35"
   }
 }

@@ -1,22 +1,37 @@
-import AdminShell from "@/components/admin/AdminShell";
-import Link from "next/link";
+"use client";
 
-const sections = [
-  { href: "/admin/site", title: "Informații generale", desc: "Telefon, e-mail, adresă, program" },
-  { href: "/admin/home", title: "Pagina principală", desc: "Texte hero, caracteristici, testimoniale" },
-  { href: "/admin/anunturi", title: "Anunțuri", desc: "Noutăți și anunțuri importante" },
-  { href: "/admin/echipa", title: "Echipa", desc: "Educatoare și personal de sprijin" },
-  { href: "/admin/conducere", title: "Conducere", desc: "Director, consiliu de administrație" },
-];
+import Link from "next/link";
+import AdminShell from "@/components/admin/AdminShell";
+import { ADMIN_CONTENT_SECTIONS, getTextPageEntries } from "@/lib/cms/admin-nav";
+
+const textSections = getTextPageEntries().map((m) => ({
+  href: m.adminHref,
+  title: m.label,
+  desc: m.desc,
+}));
 
 export default function AdminDashboard() {
   return (
     <AdminShell title="Panou de administrare">
-      <p style={{ color: "var(--ink-soft)", marginTop: 0, marginBottom: 28 }}>
-        Alege o secțiune pentru a edita conținutul site-ului. Modificările apar imediat pe site după salvare.
+      <div className="admin-dash-grid">
+        {ADMIN_CONTENT_SECTIONS.map((s) => (
+          <article key={s.href} className="admin-dash-card">
+            <h3>{s.title}</h3>
+            <p>{s.desc}</p>
+            <Link href={s.href}>Editează →</Link>
+          </article>
+        ))}
+      </div>
+
+      <h2 style={{ marginTop: 40, marginBottom: 16, fontFamily: "var(--font-display)", fontWeight: 500 }}>
+        Texte pagini
+      </h2>
+      <p style={{ color: "var(--ink-soft)", marginTop: 0, marginBottom: 20, maxWidth: 640 }}>
+        Titluri, descrieri și paragrafe — fără liste de poze, documente, grupe sau proiecte
+        (acestea se editează în secțiunile de mai sus).
       </p>
       <div className="admin-dash-grid">
-        {sections.map((s) => (
+        {textSections.map((s) => (
           <article key={s.href} className="admin-dash-card">
             <h3>{s.title}</h3>
             <p>{s.desc}</p>

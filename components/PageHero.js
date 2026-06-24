@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
-export default function PageHero({ kicker, title, lead, crumb, image, imageAlt }) {
+export default function PageHero({ kicker, title, lead, crumb, crumbPath, image, imageAlt }) {
   return (
     <section className="page-hero">
+      {crumb && crumbPath && <BreadcrumbJsonLd label={crumb} path={crumbPath} />}
       <span className="dotgrid" style={{ top: 28, right: 30 }} />
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         {image ? (

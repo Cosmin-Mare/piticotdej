@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Pagina nu a fost găsită",
+  robots: { index: false, follow: true },
+};
+
 export default function NotFound() {
   return (
     <section className="section" style={{ textAlign: "center", minHeight: "60vh", display: "grid", placeContent: "center" }}>

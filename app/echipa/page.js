@@ -1,19 +1,26 @@
+import Image from "next/image";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
-import { getContent } from "@/lib/content";
+import { fetchPageContentServer } from "@/lib/cms/page-content-server";
+import { getPublicEchipaTeam } from "@/lib/cms/public-data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Echipa" };
+export const metadata = pageMetadata("echipa");
+
+export const revalidate = 60;
 
 export default async function Echipa() {
-  const { team, stats, support } = await getContent("echipa");
+  const team = await getPublicEchipaTeam();
+  const { hero, stats, supportHead, support } = await fetchPageContentServer("echipa");
 
   return (
     <>
       <PageHero
         crumb="Echipa"
-        kicker="Oamenii noștri"
-        title="Educatoarele care fac diferența"
-        lead="O echipă caldă, calificată și dedicată, cu experiență în educația timpurie — sprijinită de personal medical și auxiliar atent."
+        crumbPath="/echipa"
+        kicker={hero.kicker}
+        title={hero.title}
+        lead={hero.lead}
       />
 
       <section className="section">
@@ -21,8 +28,12 @@ export default async function Echipa() {
           <div className="grid grid-3">
             {team.map((t, i) => (
               <article key={i} className="member reveal" style={{ transitionDelay: `${i * 50}ms` }}>
-                <div className="m-photo" style={{ background: t.color }}>
-                  <Icon name="users" size={42} />
+                <div className="m-photo" style={t.image ? undefined : { background: t.color }}>
+                  {t.image ? (
+                    <Image src={t.image} alt={t.name} width={400} height={150} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <Icon name="users" size={42} />
+                  )}
                 </div>
                 <div className="m-body">
                   <h3>{t.name}</h3>
@@ -51,15 +62,15 @@ export default async function Echipa() {
       <section className="section">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Personal de sprijin</span>
-            <h2>O echipă completă, în jurul fiecărui copil</h2>
+            <span className="kicker center">{supportHead.kicker}</span>
+            <h2>{supportHead.title}</h2>
           </div>
           <div className="grid grid-4">
             {support.map((s) => (
-              <article key={s.t} className="card reveal" style={{ textAlign: "center" }}>
-                <div className={`ico ${s.tint}`} style={{ margin: "0 auto 16px" }}><Icon name={s.i} /></div>
-                <h3 style={{ fontSize: "1.15rem" }}>{s.t}</h3>
-                <p style={{ color: "var(--ink-soft)", margin: 0, fontSize: "0.92rem" }}>{s.d}</p>
+              <article key={s.title} className="card reveal" style={{ textAlign: "center" }}>
+                <div className={`ico ${s.tint}`} style={{ margin: "0 auto 16px" }}><Icon name={s.icon} /></div>
+                <h3 style={{ fontSize: "1.15rem" }}>{s.title}</h3>
+                <p style={{ color: "var(--ink-soft)", margin: 0, fontSize: "0.92rem" }}>{s.text}</p>
               </article>
             ))}
           </div>
@@ -69,7 +80,7 @@ export default async function Echipa() {
       <style dangerouslySetInnerHTML={{ __html: `
         .member { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-xs); transition: transform 0.25s ease, box-shadow 0.25s ease; }
         .member:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .m-photo { height: 150px; display: grid; place-items: center; color: rgba(255,255,255,0.85); }
+        .m-photo { height: 150px; display: grid; place-items: center; color: rgba(255,255,255,0.85); overflow: hidden; }
         .m-body { padding: 24px 26px 28px; }
         .m-body h3 { margin-bottom: 10px; font-size: 1.2rem; }
         .m-body .tag { margin-bottom: 13px; background: var(--sky-soft); color: var(--sky); }

@@ -1,0 +1,54 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "anunturi",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "data_publicare", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "membri_echipa",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "pagina", "order": "ASCENDING" },
+        { "fieldPath": "ordine", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "membri_echipa",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "pagina", "order": "ASCENDING" },
+        { "fieldPath": "vizibil", "order": "ASCENDING" },
+        { "fieldPath": "ordine", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "membri_consiliu",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "vizibil", "order": "ASCENDING" },
+        { "fieldPath": "ordine", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "galerie_poze",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "vizibil", "order": "ASCENDING" },
+        { "fieldPath": "ordine", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "testimoniale",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "vizibil", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

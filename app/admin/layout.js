@@ -1,5 +1,15 @@
+import AdminProviders from "@/components/admin/AdminProviders";
 import "./admin.css";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function AdminRootLayout({ children }) {
-  return <div className="admin">{children}</div>;
+  return (
+    <div className="admin">
+      <AdminProviders>{children}</AdminProviders>
+    </div>
+  );
 }

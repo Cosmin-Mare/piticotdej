@@ -1,30 +1,37 @@
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
+import { fetchPageContentServer } from "@/lib/cms/page-content-server";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Proiecte" };
+export const metadata = pageMetadata("proiecte");
 
-export default function Proiecte() {
+export const revalidate = 60;
+
+export default async function Proiecte() {
+  const { hero, projects, partnersHead, partners, band } = await fetchPageContentServer("proiecte");
+
   return (
     <>
       <PageHero
         crumb="Proiecte"
-        kicker="Proiecte & parteneriate"
-        title="Proiecte educaționale"
-        lead="Programe și parteneriate care aduc oportunități noi de învățare pentru copii și de dezvoltare pentru instituție."
+        crumbPath="/proiecte"
+        kicker={hero.kicker}
+        title={hero.title}
+        lead={hero.lead}
       />
 
       <section className="section">
         <div className="container">
           <div className="grid grid-3">
-            {projects.map((p) => (
-              <article key={p.t} className="proj reveal" style={{ "--c": p.color }}>
+            {projects.map((p, i) => (
+              <article key={`${p.title}-${i}`} className="proj reveal">
                 <div className="proj-top">
-                  <span className={`ico ${p.tint}`} style={{ margin: 0 }}><Icon name={p.i} /></span>
+                  <span className={`ico ${p.tint}`} style={{ margin: 0 }}><Icon name={p.icon} /></span>
                   <span className="tag">{p.status}</span>
                 </div>
-                <h3>{p.t}</h3>
-                <p>{p.d}</p>
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
               </article>
             ))}
           </div>
@@ -34,13 +41,13 @@ export default function Proiecte() {
       <section className="section bg-sand">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Parteneri</span>
-            <h2>Colaborăm pentru binele copiilor</h2>
-            <p className="lead">Lucrăm alături de instituții și organizații din comunitate pentru a oferi cele mai bune experiențe.</p>
+            <span className="kicker center">{partnersHead.kicker}</span>
+            <h2>{partnersHead.title}</h2>
+            <p className="lead">{partnersHead.lead}</p>
           </div>
           <div className="partners reveal">
-            {partners.map((p) => (
-              <div key={p} className="partner">{p}</div>
+            {partners.map((p, i) => (
+              <div key={`${p}-${i}`} className="partner">{p}</div>
             ))}
           </div>
         </div>
@@ -50,8 +57,8 @@ export default function Proiecte() {
         <div className="container">
           <div className="band reveal">
             <div>
-              <h3 style={{ color: "#fff", marginBottom: 6 }}>Ai o propunere de parteneriat?</h3>
-              <p style={{ color: "rgba(255,255,255,0.9)", margin: 0 }}>Suntem deschiși la colaborări care aduc valoare educației timpurii.</p>
+              <h3 style={{ color: "#fff", marginBottom: 6 }}>{band.title}</h3>
+              <p style={{ color: "rgba(255,255,255,0.9)", margin: 0 }}>{band.text}</p>
             </div>
             <Link href="/contact" className="btn btn-light">Contactează-ne <Icon name="arrow" /></Link>
           </div>
@@ -71,21 +78,3 @@ export default function Proiecte() {
     </>
   );
 }
-
-const projects = [
-  { i: "globe", tint: "sky", t: "Erasmus+", status: "În derulare", color: "var(--sky)", d: "Schimburi de bune practici și formare europeană pentru cadrele didactice, aducând metode moderne în sala de grupă." },
-  { i: "building", tint: "clay", t: "PNRR – Educație timpurie", status: "Implementare", color: "var(--clay)", d: "Dotări moderne și digitalizare prin Planul Național de Redresare și Reziliență, pentru spații de învățare la standarde noi." },
-  { i: "book", tint: "rose", t: "Cărți pentru piticoți", status: "Anual", color: "var(--rose)", d: "Proiect de stimulare a lecturii și a dragostei pentru povești, cu bibliotecă de grupă și ateliere de lectură." },
-  { i: "leaf", tint: "sage", t: "Eco-grădinița", status: "Continuu", color: "var(--sage)", d: "Educație pentru mediu: colectare selectivă, grădină de legume și activități despre natură." },
-  { i: "users", tint: "sun", t: "Școala părinților", status: "Lunar", color: "var(--sun)", d: "Întâlniri și ateliere pentru părinți pe teme de educație, sănătate și dezvoltarea copilului." },
-  { i: "handshake", tint: "clay", t: "Parteneriat cu școala", status: "Anual", color: "var(--clay)", d: "Tranziție lină de la grădiniță la școală, prin vizite și activități comune cu școlile din Dej." },
-];
-
-const partners = [
-  "Primăria Municipiului Dej",
-  "Inspectoratul Școlar Județean Cluj",
-  "Școlile partenere din Dej",
-  "Biblioteca Municipală Dej",
-  "Cabinetul medical școlar",
-  "ARACIP",
-];

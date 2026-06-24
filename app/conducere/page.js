@@ -1,31 +1,48 @@
-import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
-import { getContent } from "@/lib/content";
+import Image from "next/image";
+import { fetchPageContentServer } from "@/lib/cms/page-content-server";
+import { getPublicConducereLeaders, getPublicMembriConsiliu } from "@/lib/cms/public-data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Conducere" };
+export const metadata = pageMetadata("conducere");
+
+export const revalidate = 60;
 
 export default async function Conducere() {
-  const { leaders, bodies, council } = await getContent("conducere");
+  const [leaders, councilFromDb, pageContent] = await Promise.all([
+    getPublicConducereLeaders(),
+    getPublicMembriConsiliu(),
+    fetchPageContentServer("conducere"),
+  ]);
+  const { hero, organismeHead, bodies, consiliuHead, council: councilFallback } = pageContent;
+  const council = councilFromDb.length > 0 ? councilFromDb : councilFallback;
 
   return (
     <>
       <PageHero
         crumb="Conducere"
-        kicker="Structura organizatorică"
-        title="Conducerea instituției"
-        lead="Echipa de management și organismele care asigură buna funcționare a grădiniței, conform legislației în vigoare."
+        crumbPath="/conducere"
+        kicker={hero.kicker}
+        title={hero.title}
+        lead={hero.lead}
       />
 
       <section className="section">
         <div className="container">
           <div className="grid grid-2" style={{ maxWidth: 840, margin: "0 auto" }}>
             {leaders.map((l) => (
-              <article key={l.role} className="lead-card reveal">
-                <div className="lead-avatar">{l.initials}</div>
+              <article key={l.role || l.name} className="lead-card reveal">
+                {l.image ? (
+                  <div className="lead-avatar lead-avatar-photo">
+                    <Image src={l.image} alt={l.name} width={80} height={80} />
+                  </div>
+                ) : (
+                  <div className="lead-avatar">{l.initials || l.name?.charAt(0)}</div>
+                )}
                 <h3>{l.name}</h3>
                 <span className="tag">{l.role}</span>
-                <p>{l.desc}</p>
+                <p>{l.desc || l.note}</p>
               </article>
             ))}
           </div>
@@ -35,8 +52,8 @@ export default async function Conducere() {
       <section className="section bg-sand">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Organisme de conducere</span>
-            <h2>Cum este organizată grădinița</h2>
+            <span className="kicker center">{organismeHead.kicker}</span>
+            <h2>{organismeHead.title}</h2>
           </div>
           <div className="grid grid-3">
             {bodies.map((b) => (
@@ -53,12 +70,9 @@ export default async function Conducere() {
       <section className="section">
         <div className="container">
           <div className="section-head reveal">
-            <span className="kicker center">Consiliul de Administrație</span>
-            <h2>Componența Consiliului de Administrație</h2>
-            <p className="lead">
-              Consiliul de Administrație este organul de conducere al unității de
-              învățământ și este constituit conform prevederilor legale în vigoare.
-            </p>
+            <span className="kicker center">{consiliuHead.kicker}</span>
+            <h2>{consiliuHead.title}</h2>
+            <p className="lead">{consiliuHead.lead}</p>
           </div>
           <div className="ca-table reveal">
             <div className="ca-row ca-head">
@@ -66,14 +80,24 @@ export default async function Conducere() {
             </div>
             {council.map((c) => (
               <div key={c.role + c.name} className="ca-row">
-                <span>{c.name}</span><span>{c.role}</span><span>{c.repr}</span>
+                <span className="ca-member">
+                  {c.image ? (
+                    <span className="ca-avatar">
+                      <Image src={c.image} alt={c.name} width={36} height={36} />
+                    </span>
+                  ) : null}
+                  {c.name}
+                </span>
+                <span>{c.role}</span>
+                <span>{c.repr}</span>
               </div>
             ))}
           </div>
-          <p style={{ textAlign: "center", color: "var(--muted)", marginTop: 20, fontSize: "0.9rem" }}>
-            Componența nominală se actualizează la începutul fiecărui an școlar și este publicată în secțiunea{" "}
-            <Link href="/documente" style={{ color: "var(--clay-deep)", fontWeight: 500 }}>Documente</Link>.
-          </p>
+          {consiliuHead.footnote && (
+            <p style={{ textAlign: "center", color: "var(--muted)", marginTop: 20, fontSize: "0.9rem" }}>
+              {consiliuHead.footnote}
+            </p>
+          )}
         </div>
       </section>
 
@@ -88,6 +112,9 @@ export default async function Conducere() {
         .ca-row:last-child { border-bottom: none; }
         .ca-head { background: var(--sand); font-family: var(--font-display); font-weight: 500; color: var(--ink); }
         .ca-row span:first-child { font-weight: 500; color: var(--ink); }
+        .ca-member { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; color: var(--ink); }
+        .ca-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--clay-soft); }
+        .ca-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .ca-row span { color: var(--ink-soft); font-size: 0.94rem; }
         @media (max-width: 640px) {
           .ca-row { grid-template-columns: 1fr; gap: 4px; padding: 16px 18px; }

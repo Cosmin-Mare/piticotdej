@@ -75,7 +75,7 @@ export default function Navbar() {
           )}
           <span className="nav-sep" aria-hidden="true" />
           <Link href="/contact" className="btn btn-primary nav-cta">
-            Înscrieri <Icon name="arrow" />
+            Contact <Icon name="arrow" />
           </Link>
         </nav>
 

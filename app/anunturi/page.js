@@ -1,9 +1,10 @@
 import Image from "next/image";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
+import JsonLd from "@/components/JsonLd";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicAnunturi } from "@/lib/cms/public-data";
-import { pageMetadata } from "@/lib/seo";
+import { buildAnunturiJsonLd, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata("anunturi");
 
@@ -12,9 +13,11 @@ export const revalidate = 60;
 export default async function Anunturi() {
   const page = await fetchPageContentServer("anunturi");
   const news = await getPublicAnunturi();
+  const newsJsonLd = buildAnunturiJsonLd(news);
 
   return (
     <>
+      {newsJsonLd && <JsonLd data={newsJsonLd} />}
       <PageHero
         crumb="Anunțuri"
         crumbPath="/anunturi"
@@ -30,7 +33,7 @@ export default async function Anunturi() {
               <p style={{ color: "var(--ink-soft)" }}>Nu există anunțuri publicate momentan.</p>
             ) : (
               news.map((n, i) => (
-                <article key={i} className="news-card reveal">
+                <article key={i} id={`anunt-${n.id}`} className="news-card reveal">
                   <div className="photo news-thumb">
                     <Image src={n.image} alt={n.title} width={260} height={200} />
                     <span className="news-date"><strong>{n.day}</strong>{n.mon}</span>

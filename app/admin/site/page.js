@@ -205,6 +205,21 @@ export default function AdminSiteSettingsPage() {
       </div>
 
       <div className="admin-card">
+        <h2>Rețele sociale (SEO)</h2>
+        <p className="admin-field-hint" style={{ marginTop: 0, marginBottom: 16 }}>
+          Link-uri către profilurile oficiale (Facebook, Instagram etc.). Apare în datele structurate Google și leagă site-ul de prezența voastră online.
+        </p>
+        <Field
+          label="Profiluri sociale"
+          value={data.same_as}
+          onChange={(v) => setField("same_as", v)}
+          hint="Câte un URL pe linie, ex: https://www.facebook.com/gradinitapiticot"
+          multiline
+          where="Google → date structurate (sameAs)"
+        />
+      </div>
+
+      <div className="admin-card">
         <h2>Despre grădiniță</h2>
         <p className="admin-field-hint" style={{ marginTop: 0, marginBottom: 16 }}>
           Aceste cifre pot fi folosite pe pagina Despre și în alte secțiuni ale site-ului.

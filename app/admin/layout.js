@@ -1,6 +1,11 @@
 import AdminProviders from "@/components/admin/AdminProviders";
 import "./admin.css";
 
+export const metadata = {
+  title: "Administrare",
+  robots: { index: false, follow: false },
+};
+
 export const viewport = {
   width: "device-width",
   initialScale: 1,

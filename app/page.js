@@ -19,7 +19,7 @@ export const revalidate = 60;
 export default async function Home() {
   const site = await getSiteConfig();
   const content = await fetchPageContentServer("acasa");
-  const { hero: heroContent, intro, featuresHead, features, sectiuni, cta } = content;
+  const { hero: heroContent, intro, sediiHead, sedii, sediiFootnote, featuresHead, features, sectiuni, cta } = content;
   const groups = await getPublicHomeGroups();
   const day = await getPublicHomeDay();
   const testimonials = await getPublicHomeTestimonialsWithFallback();
@@ -98,8 +98,36 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ===================== FEATURES ===================== */}
+      {/* ===================== LOCATIONS (PJ & STRUCTURI) ===================== */}
       <section className="section bg-sand">
+        <div className="container">
+          <div className="section-head reveal">
+            <span className="kicker center">{sediiHead.kicker}</span>
+            <h2>{sediiHead.title}</h2>
+            <p className="lead">{sediiHead.lead}</p>
+          </div>
+          <div className="grid grid-3">
+            {sedii.map((s, i) => (
+              <article key={s.name} className="loc-card reveal" style={{ transitionDelay: `${i * 60}ms` }}>
+                <div className="ico sage"><Icon name="building" /></div>
+                <h3>{s.name}</h3>
+                <p className="loc-addr"><Icon name="compass" size={16} /> {s.address}</p>
+                <ul className="loc-list">
+                  {s.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+          {sediiFootnote && (
+            <p className="loc-footnote reveal">{sediiFootnote}</p>
+          )}
+        </div>
+      </section>
+
+      {/* ===================== FEATURES ===================== */}
+      <section className="section">
         <div className="container">
           <div className="section-head reveal">
             <span className="kicker center">{featuresHead.kicker}</span>
@@ -259,6 +287,20 @@ export default async function Home() {
         .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 13px; }
         .checklist li { display: flex; align-items: flex-start; gap: 12px; color: var(--ink-soft); font-weight: 400; }
         .checklist svg { color: var(--sage); flex-shrink: 0; margin-top: 4px; }
+
+        .loc-card {
+          background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg);
+          padding: 28px 26px; box-shadow: var(--shadow-xs);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .loc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .loc-card h3 { margin: 14px 0 10px; font-size: 1.15rem; }
+        .loc-addr { display: flex; align-items: center; gap: 8px; color: var(--clay-deep); font-weight: 500; font-size: 0.92rem; margin: 0 0 16px; }
+        .loc-addr svg { flex-shrink: 0; opacity: 0.85; }
+        .loc-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+        .loc-list li { position: relative; padding-left: 16px; color: var(--ink-soft); font-size: 0.93rem; line-height: 1.45; }
+        .loc-list li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+        .loc-footnote { text-align: center; color: var(--ink-soft); margin: 36px auto 0; max-width: 720px; font-size: 0.95rem; line-height: 1.55; }
 
         .groups-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 44px; }
         .groups-head h2 { margin: 14px 0 0; }

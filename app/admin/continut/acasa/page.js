@@ -12,6 +12,7 @@ import {
   SectionHeadPreview,
   FeatureCardPreview,
   ChecklistPreview,
+  LocationCardPreview,
   CtaPreview,
 } from "@/components/admin/previews/variants";
 import { ICON_OPTIONS, TINT_OPTIONS } from "@/lib/cms/page-content";
@@ -42,6 +43,40 @@ export default function AdminContinutAcasaPage() {
 
   function setIntro(key, val) {
     setData((prev) => ({ ...prev, intro: { ...prev.intro, [key]: val } }));
+  }
+
+  function setSediiHead(key, val) {
+    setData((prev) => ({ ...prev, sediiHead: { ...prev.sediiHead, [key]: val } }));
+  }
+
+  function setSediu(i, key, val) {
+    setData((prev) => {
+      const sedii = [...prev.sedii];
+      sedii[i] = { ...sedii[i], [key]: val };
+      return { ...prev, sedii };
+    });
+  }
+
+  function setSediuItems(i, items) {
+    setData((prev) => {
+      const sedii = [...prev.sedii];
+      sedii[i] = { ...sedii[i], items };
+      return { ...prev, sedii };
+    });
+  }
+
+  function addSediu() {
+    setData((prev) => ({
+      ...prev,
+      sedii: [...prev.sedii, { name: "", address: "", items: [""] }],
+    }));
+  }
+
+  function removeSediu(i) {
+    setData((prev) => ({
+      ...prev,
+      sedii: prev.sedii.filter((_, idx) => idx !== i),
+    }));
   }
 
   function setFeaturesHead(key, val) {
@@ -117,6 +152,52 @@ export default function AdminContinutAcasaPage() {
           items={data.intro.checklist}
           onChange={(v) => setIntro("checklist", v)}
           hint="Punctele afișate cu iconiță verde"
+        />
+      </div>
+
+      <div className="admin-card">
+        <h2>Sedii — PJ și structuri</h2>
+        <SectionPreview where="Pagina principală → secțiunea Sedii (PJ & structuri)" href="/">
+          <SectionHeadPreview kicker={data.sediiHead.kicker} title={data.sediiHead.title} lead={data.sediiHead.lead} />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
+            {data.sedii.map((s, i) => (
+              <LocationCardPreview key={i} name={s.name} address={s.address} items={s.items} />
+            ))}
+          </div>
+          {data.sediiFootnote && (
+            <p style={{ marginTop: 12, fontSize: "0.9rem", color: "var(--ink-soft)" }}>{data.sediiFootnote}</p>
+          )}
+        </SectionPreview>
+        <Field label="Etichetă mică" value={data.sediiHead.kicker} onChange={(v) => setSediiHead("kicker", v)} />
+        <Field label="Titlu" value={data.sediiHead.title} onChange={(v) => setSediiHead("title", v)} />
+        <Field label="Descriere" value={data.sediiHead.lead} onChange={(v) => setSediiHead("lead", v)} multiline />
+        {data.sedii.map((s, i) => (
+          <div key={i} className="admin-list-item">
+            <div className="admin-list-head">
+              <strong>Locație {i + 1}: {s.name || "fără nume"}</strong>
+              <button type="button" className="admin-btn admin-btn-danger" onClick={() => removeSediu(i)}>
+                Șterge locația
+              </button>
+            </div>
+            <Field label="Nume locație" value={s.name} onChange={(v) => setSediu(i, "name", v)} hint="Ex: Punct de lucru (PJ)" />
+            <Field label="Adresă" value={s.address} onChange={(v) => setSediu(i, "address", v)} />
+            <StringListEditor
+              label="Grupe / detalii"
+              items={s.items}
+              onChange={(v) => setSediuItems(i, v)}
+              hint="Fiecare rând apare ca punct în cardul locației"
+            />
+          </div>
+        ))}
+        <button type="button" className="admin-btn admin-btn-ghost" onClick={addSediu} style={{ marginTop: 8 }}>
+          + Adaugă locație
+        </button>
+        <Field
+          label="Notă de subsol"
+          value={data.sediiFootnote}
+          onChange={(v) => setData((p) => ({ ...p, sediiFootnote: v }))}
+          multiline
+          hint="Text sub carduri (vârste de înscriere, criterii de grupare etc.)"
         />
       </div>
 

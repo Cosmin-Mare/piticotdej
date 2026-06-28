@@ -104,6 +104,26 @@ export function ChecklistPreview({ items = [] }) {
   );
 }
 
+export function LocationCardPreview({ name, address, items = [] }) {
+  const list = items.filter(Boolean);
+  return (
+    <div className="pv-card">
+      <span className="pv-ico sage">
+        <Icon name="building" size={20} />
+      </span>
+      {name && <h3 className="pv-h3">{name}</h3>}
+      {address && <p className="pv-text" style={{ fontWeight: 500, color: "var(--clay-deep)" }}>{address}</p>}
+      {list.length > 0 && (
+        <ul className="pv-checklist" style={{ marginTop: 10 }}>
+          {list.map((item, i) => (
+            <li key={i} style={{ fontSize: "0.88rem" }}>{item}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function CtaPreview({ kicker, title, text }) {
   return (
     <div className="pv-cta">

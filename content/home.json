@@ -13,14 +13,47 @@
   "intro": {
     "kicker": "Despre noi",
     "title": "O grădiniță cu suflet, în inima Dejului",
-    "lead": "De peste trei decenii însoțim copiii la primii pași în educație. Punem accent pe un act educațional de performanță, menit să dezvolte copii sănătoși, creativi și eficienți.",
+    "lead": "Grădinița cu Program Prelungit „Piticot\" Dej, jud. Cluj, funcționează la sediul principal și în structurile din oraș. De peste trei decenii însoțim copiii la primii pași în educație, cu un act educațional de performanță.",
     "checklist": [
+      "Predare în limba română și limba maghiară",
       "Personal calificat și metode moderne, centrate pe copil",
       "Trei mese calde, diversificate, pregătite zilnic",
       "Cabinet medical și asistent medical prezent zilnic",
       "Comunicare deschisă și constantă cu părinții"
     ]
   },
+  "sediiHead": {
+    "kicker": "Unde ne găsești",
+    "title": "Sediul principal (PJ) și structurile din Dej",
+    "lead": "Grădinița funcționează în mai multe locații, cu grupe de program prelungit și normal, în secțiile română și maghiară."
+  },
+  "sedii": [
+    {
+      "name": "Punct de lucru (PJ)",
+      "address": "Aleea Tomis nr. 2, Dej",
+      "items": [
+        "6 grupe cu program prelungit — secția română",
+        "1 grupă program prelungit — secția maghiară, nivel preșcolar",
+        "1 grupă program prelungit — secția română, nivel antepreșcolar"
+      ]
+    },
+    {
+      "name": "Structură I — Bobâlna",
+      "address": "Str. Bobâlna nr. 8–10, Dej",
+      "items": [
+        "1 grupă program prelungit — secția maghiară, nivel preșcolar",
+        "1 grupă program prelungit — secția maghiară, nivel antepreșcolar"
+      ]
+    },
+    {
+      "name": "Structură I — Caragiale",
+      "address": "Str. I.L. Caragiale nr. 23, Dej",
+      "items": [
+        "1 grupă program normal — secția română, nivel preșcolar"
+      ]
+    }
+  ],
+  "sediiFootnote": "Vârsta de înscriere: copii cu vârsta de 2 ani (nivel antepreșcolar) și copii cu vârsta de 3 ani (nivel preșcolar). Grupele se constituie după criteriul vârstei: antepreșcolar (2 ani), preșcolar mică (3–4 ani), mijlocie (4–5 ani), mare (5–6 ani).",
   "featuresHead": {
     "kicker": "De ce Piticot",
     "title": "Grijă, joacă și un început frumos",

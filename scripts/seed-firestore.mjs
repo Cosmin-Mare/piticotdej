@@ -312,6 +312,9 @@ async function seedPageContent() {
       hero: home.hero,
       heroBadge: { title: "Program prelungit" },
       intro: home.intro,
+      sediiHead: home.sediiHead,
+      sedii: home.sedii,
+      sediiFootnote: home.sediiFootnote,
       featuresHead: home.featuresHead,
       features: home.features,
       sectiuni: {

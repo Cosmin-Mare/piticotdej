@@ -51,18 +51,6 @@ export default async function Footer() {
             <Link href="/documente">Documente publice</Link>
           </span>
         </div>
-        {site.footerCredit && (
-          <p className="ft-credit">
-            {site.footerCreditUrl ? (
-              <>
-                Machetă demonstrativă realizată de{" "}
-                <a href={site.footerCreditUrl} target="_blank" rel="noopener">{site.footerCredit}</a>
-              </>
-            ) : (
-              site.footerCredit
-            )}
-          </p>
-        )}
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
@@ -84,9 +72,6 @@ export default async function Footer() {
         .ft-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 26px; font-size: 0.85rem; color: #71717a; }
         .ft-links { display: inline-flex; gap: 10px; }
         .ft-links a:hover { color: var(--clay); }
-        .ft-credit { text-align: center; font-size: 0.8rem; color: #54545c; margin: 16px 0 0; }
-        .ft-credit a { color: #71717a; }
-        .ft-credit a:hover { color: var(--clay); }
         @media (max-width: 880px) { .ft-top { grid-template-columns: 1fr 1fr; gap: 30px; } }
         @media (max-width: 520px) { .ft-top { grid-template-columns: 1fr; } }
       ` }} />

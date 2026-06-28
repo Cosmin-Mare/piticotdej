@@ -135,8 +135,8 @@ async function seedSiteSettings() {
       "Grădiniță cu program prelungit în Dej — educație de calitate, mediu sigur și cald pentru copii de la 2 la 6 ani. Secții română și maghiară.",
     descriere_footer:
       "Grădiniță cu program prelungit în Dej, județul Cluj. Un loc cald și sigur unde copiii cresc, descoperă și se joacă — în secțiile română și maghiară.",
-    text_credit: "Machetă demonstrativă realizată de Mare Cosmin-Tudor PFA",
-    text_credit_url: "https://mare-cosmin.ro",
+    text_credit: "",
+    text_credit_url: "",
     maps_query: site.mapsQuery,
     maps_embed: site.mapsEmbed,
     updatedBy: BY,

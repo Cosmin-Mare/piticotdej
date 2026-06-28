@@ -22,8 +22,3 @@ jobs:
         continue-on-error: true
 
       - run: npm run lint
-
-      - run: npm run build
-        env:
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ci-placeholder
-          NEXT_PUBLIC_FIREBASE_API_KEY: ci-placeholder

@@ -944,9 +944,21 @@
   color: var(--ink-soft);
 }
 
-.admin-pdf-current a {
+.admin-pdf-current a,
+.admin-pdf-current .admin-link-btn {
   color: var(--clay-deep);
   font-weight: 600;
+}
+
+.admin-link-btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .admin-image-preview {

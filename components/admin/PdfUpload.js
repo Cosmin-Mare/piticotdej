@@ -3,6 +3,10 @@
 import { useCallback, useRef, useState } from "react";
 import { FieldPreview } from "@/components/admin/ChangePreview";
 import { uploadDocumentPdf, formatPdfUploadError } from "@/lib/cms/upload-pdf";
+import {
+  EMPTY_DOCUMENT_HREF,
+  hasDocumentFile,
+} from "@/lib/cms/documents";
 
 export default function PdfUpload({
   docId,
@@ -15,6 +19,7 @@ export default function PdfUpload({
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const hasFile = hasDocumentFile(currentUrl);
 
   const handleFile = useCallback(async (file) => {
     if (!file || uploading) return;
@@ -48,16 +53,29 @@ export default function PdfUpload({
     setDragging(false);
   }
 
+  function clearFile() {
+    setError("");
+    onChange(EMPTY_DOCUMENT_HREF);
+  }
+
   return (
     <div className="admin-field">
       <label>{label}</label>
 
-      {currentUrl && (
+      {hasFile ? (
         <p className="admin-pdf-current">
           Fișier curent:{" "}
           <a href={currentUrl} target="_blank" rel="noopener noreferrer">
             deschide PDF
           </a>
+          {" · "}
+          <button type="button" className="admin-link-btn" onClick={clearFile}>
+            Șterge fișierul
+          </button>
+        </p>
+      ) : (
+        <p className="admin-pdf-current" style={{ color: "var(--ink-soft)" }}>
+          Niciun fișier — se va salva ca „{EMPTY_DOCUMENT_HREF}” pe site.
         </p>
       )}
 
@@ -98,7 +116,7 @@ export default function PdfUpload({
       </div>
 
       <p className="admin-field-hint">
-        Încarcă un fișier PDF (max. 15 MB). Poți înlocui documentul oricând cu un alt PDF.
+        Încarcă un fișier PDF (max. 15 MB). Poți înlocui documentul oricând, sau îl poți șterge (rămâne link „{EMPTY_DOCUMENT_HREF}”).
       </p>
 
       {where && <FieldPreview where={where} />}

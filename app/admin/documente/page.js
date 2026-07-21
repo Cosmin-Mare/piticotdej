@@ -13,6 +13,10 @@ import {
 import { logActivity } from "@/lib/cms/anunturi";
 import { createOrderedDocServer } from "@/lib/cms/collection-server";
 import { readAdminListCache, writeAdminListCache } from "@/lib/cms/admin-list-cache";
+import {
+  DEFAULT_DOCUMENT_CATEGORY,
+  EMPTY_DOCUMENT_HREF,
+} from "@/lib/cms/documents";
 
 const COLLECTION = "documente";
 
@@ -54,7 +58,9 @@ export default function AdminDocumentePage() {
         setCreating(true);
         try {
           const id = await createOrderedDocServer(COLLECTION, {
-            titlu: "", fisier_url: "", categorie: "Altele",
+            titlu: "",
+            fisier_url: EMPTY_DOCUMENT_HREF,
+            categorie: DEFAULT_DOCUMENT_CATEGORY,
           });
           void logActivity(user.email, "A adăugat un document nou");
           router.push(`/admin/documente/${id}`);

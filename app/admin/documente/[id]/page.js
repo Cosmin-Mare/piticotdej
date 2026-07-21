@@ -14,15 +14,14 @@ import { logActivity } from "@/lib/cms/anunturi";
 import { deleteDocServer, revalidatePaths } from "@/lib/cms/collection-server";
 import { REVALIDATE } from "@/lib/cms/revalidate-paths";
 import { isAdminRole } from "@/lib/cms/constants";
+import {
+  DOCUMENT_CATEGORIES,
+  DEFAULT_DOCUMENT_CATEGORY,
+  EMPTY_DOCUMENT_HREF,
+  normalizeDocumentHref,
+} from "@/lib/cms/documents";
 
 const COLLECTION = "documente";
-const CATEGORII = [
-  "Acte constitutive",
-  "Regulamente",
-  "Proiecte educative",
-  "Rapoarte",
-  "Altele",
-];
 
 export default function AdminDocumenteEditPage() {
   const { id } = useParams();
@@ -50,15 +49,13 @@ export default function AdminDocumenteEditPage() {
       setMessage("Te rog completează titlul documentului înainte de a salva.");
       return;
     }
-    if (!(data.fisier_url || "").trim()) {
-      setMessage("Te rog încarcă un fișier PDF înainte de a salva.");
-      return;
-    }
     setSaving(true);
     setMessage("");
     try {
       const { id: docId, ...fields } = data;
-      await saveDoc(COLLECTION, id, fields, user.email);
+      const fisier_url = normalizeDocumentHref(fields.fisier_url);
+      await saveDoc(COLLECTION, id, { ...fields, fisier_url }, user.email);
+      setData((p) => (p ? { ...p, fisier_url } : p));
       await logActivity(user.email, `A actualizat documentul „${data.titlu}”`);
       await revalidatePaths(REVALIDATE.documente);
       setMessage("Modificările au fost salvate.");
@@ -92,6 +89,11 @@ export default function AdminDocumenteEditPage() {
     return <AdminShell title="Editare document" backHref="/admin/documente"><p className="admin-msg err">Documentul nu a fost găsit.</p></AdminShell>;
   }
 
+  const categorie = data.categorie || DEFAULT_DOCUMENT_CATEGORY;
+  const categoryOptions = DOCUMENT_CATEGORIES.includes(categorie)
+    ? DOCUMENT_CATEGORIES
+    : [categorie, ...DOCUMENT_CATEGORIES];
+
   return (
     <AdminShell title="Editare document" backHref="/admin/documente">
       <ItemEditLayout
@@ -114,8 +116,8 @@ export default function AdminDocumenteEditPage() {
           <input type="text" value={data.titlu || ""} onChange={(e) => setData((p) => ({ ...p, titlu: e.target.value }))} />
         </FormField>
         <FormField label="Categorie" where="Pagina Documente → gruparea cardurilor">
-          <select value={data.categorie || "Altele"} onChange={(e) => setData((p) => ({ ...p, categorie: e.target.value }))}>
-            {CATEGORII.map((c) => <option key={c} value={c}>{c}</option>)}
+          <select value={categorie} onChange={(e) => setData((p) => ({ ...p, categorie: e.target.value }))}>
+            {categoryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </FormField>
         <PdfUpload
@@ -124,8 +126,18 @@ export default function AdminDocumenteEditPage() {
           onChange={(url) => setData((p) => ({ ...p, fisier_url: url }))}
           where="Pagina Documente → link la descărcare"
         />
-        <FormField label="Sau link extern" hint="Opțional — dacă PDF-ul este găzduit în altă parte (ex: Google Drive)" where="Pagina Documente → link la descărcare">
-          <input type="url" value={data.fisier_url || ""} onChange={(e) => setData((p) => ({ ...p, fisier_url: e.target.value }))} placeholder="https://..." />
+        <FormField
+          label="Sau link extern"
+          hint={`Opțional — lasă gol sau folosește ${EMPTY_DOCUMENT_HREF} dacă încă nu există fișier. Poți pune un link (ex: Google Drive).`}
+          where="Pagina Documente → link la descărcare"
+        >
+          <input
+            type="text"
+            inputMode="url"
+            value={data.fisier_url || ""}
+            onChange={(e) => setData((p) => ({ ...p, fisier_url: e.target.value }))}
+            placeholder={`${EMPTY_DOCUMENT_HREF} sau https://...`}
+          />
         </FormField>
       </ItemEditLayout>
     </AdminShell>

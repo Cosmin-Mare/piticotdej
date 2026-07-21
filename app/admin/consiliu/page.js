@@ -23,15 +23,21 @@ export default function AdminConsiliuPage() {
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
-    const data = await fetchAllOrdered(COLLECTION);
-    setItems(data);
-    writeAdminListCache(COLLECTION, data);
-    setLoading(false);
+    try {
+      const data = await fetchAllOrdered(COLLECTION);
+      setItems(data);
+      writeAdminListCache(COLLECTION, data);
+      setError("");
+    } catch {
+      setError("Nu am putut încărca membrii consiliului.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
     if (authLoading || !user) return;
-    load().catch(() => setError("Nu am putut încărca membrii consiliului."));
+    void load();
   }, [authLoading, user, load]);
 
   return (

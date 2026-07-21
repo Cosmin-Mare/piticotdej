@@ -106,7 +106,7 @@ export default async function Home() {
             <h2>{sediiHead.title}</h2>
             <p className="lead">{sediiHead.lead}</p>
           </div>
-          <div className="grid grid-3">
+          <div className="grid grid-4">
             {sedii.map((s, i) => (
               <article key={s.name} className="loc-card reveal" style={{ transitionDelay: `${i * 60}ms` }}>
                 <div className="ico sage"><Icon name="building" /></div>

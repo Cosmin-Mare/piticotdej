@@ -192,10 +192,6 @@ export default function AdminSiteSettingsPage() {
         </div>
         <Field label="Meta description" value={data.meta_description} onChange={(v) => setField("meta_description", v)} hint="Descriere pentru motoarele de căutare" where="Rezultate Google → descrierea de sub link" preview={<PlainTextPreview>{data.meta_description}</PlainTextPreview>} />
         <Field label="Descriere subsol" value={data.descriere_footer} onChange={(v) => setField("descriere_footer", v)} hint="Textul din zona Despre din subsol" multiline where="Subsol → paragraful de prezentare" />
-        <div className="admin-row">
-          <Field label="Text credit" value={data.text_credit} onChange={(v) => setField("text_credit", v)} hint="Ex: Mare Cosmin-Tudor PFA" where="Subsol → linia de credit site" />
-          <Field label="URL credit" value={data.text_credit_url} onChange={(v) => setField("text_credit_url", v)} hint="Link către autorul site-ului" where="Subsol → link pe numele autorului" />
-        </div>
       </div>
 
       <div className="admin-card">

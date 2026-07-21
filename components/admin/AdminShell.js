@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import HelpButton from "@/components/admin/HelpButton";
 import { ADMIN_SIDEBAR, isAdminNavActive } from "@/lib/cms/admin-nav";
 
 function NavLink({ href, label, pathname, onNavigate }) {
@@ -117,7 +116,6 @@ export default function AdminShell({ title, children, backHref }) {
             <h1>{title}</h1>
           </header>
           {children}
-          <HelpButton />
         </div>
       </div>
     </div>

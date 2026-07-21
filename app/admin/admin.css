@@ -666,19 +666,6 @@
     flex-wrap: wrap;
   }
 
-  .admin-help {
-    bottom: max(16px, env(safe-area-inset-bottom));
-    right: 16px;
-    left: 16px;
-  }
-
-  .admin-help-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 12px 18px;
-    font-size: 0.88rem;
-  }
-
   .admin-dash-grid {
     grid-template-columns: 1fr;
   }
@@ -762,32 +749,6 @@
 .admin-richtext-body a {
   color: var(--clay-deep);
   text-decoration: underline;
-}
-
-/* Help button */
-.admin-help {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 100;
-}
-
-.admin-help-btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 14px 22px;
-  background: var(--ink);
-  color: #fff;
-  border-radius: var(--radius-pill);
-  font-weight: 600;
-  font-size: 0.92rem;
-  box-shadow: var(--shadow);
-  text-decoration: none;
-}
-
-.admin-help-btn:hover {
-  background: var(--clay-deep);
-  color: #fff;
 }
 
 /* Version history */

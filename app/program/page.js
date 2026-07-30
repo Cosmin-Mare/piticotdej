@@ -5,15 +5,18 @@ import classroom from "@/public/img/p13.jpg";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicGrupe, getPublicProgramZilnic } from "@/lib/cms/public-data";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("program");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Program() {
-  const page = await fetchPageContentServer("program");
-  const day = await getPublicProgramZilnic();
-  const groups = await getPublicGrupe();
+  const [page, day, groups] = await Promise.all([
+    fetchPageContentServer("program"),
+    getPublicProgramZilnic(),
+    getPublicGrupe(),
+  ]);
 
   return (
     <>

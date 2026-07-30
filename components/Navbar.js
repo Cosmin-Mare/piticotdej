@@ -37,7 +37,7 @@ export default function Navbar() {
     <header className={`nav ${scrolled ? "nav-scrolled" : ""}`}>
       <div className="container nav-inner">
         <Link href="/" className="nav-brand" aria-label="Acasă">
-          <Logo height={23} />
+          <Logo height={23} priority />
         </Link>
 
         <nav className={`nav-links ${open ? "open" : ""}`} aria-label="Meniu principal">

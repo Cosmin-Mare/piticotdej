@@ -1,18 +1,21 @@
-import Image from "next/image";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
 import JsonLd from "@/components/JsonLd";
+import CmsImage from "@/components/CmsImage";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicAnunturi } from "@/lib/cms/public-data";
 import { buildAnunturiJsonLd, pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("anunturi");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Anunturi() {
-  const page = await fetchPageContentServer("anunturi");
-  const news = await getPublicAnunturi();
+  const [page, news] = await Promise.all([
+    fetchPageContentServer("anunturi"),
+    getPublicAnunturi(),
+  ]);
   const newsJsonLd = buildAnunturiJsonLd(news);
 
   return (
@@ -35,7 +38,7 @@ export default async function Anunturi() {
               news.map((n, i) => (
                 <article key={i} id={`anunt-${n.id}`} className="news-card reveal">
                   <div className="photo news-thumb">
-                    <Image src={n.image} alt={n.title} width={260} height={200} />
+                    <CmsImage src={n.image} alt={n.title} width={260} height={200} sizes="260px" />
                     <span className="news-date"><strong>{n.day}</strong>{n.mon}</span>
                   </div>
                   <div className="news-body">

@@ -2,10 +2,11 @@ import PageHero from "@/components/PageHero";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getSiteConfig } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("gdpr");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Gdpr() {
   const [page, site] = await Promise.all([

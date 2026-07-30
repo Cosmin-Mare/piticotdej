@@ -8,7 +8,7 @@ import {
   PAGE_CONTENT_COLLECTION,
   PAGE_CONTENT_META,
 } from "@/lib/cms/page-content";
-import { revalidatePageContent } from "@/lib/cms/page-content-server";
+import { revalidatePageContent } from "@/lib/cms/page-content-revalidate";
 import { logActivity } from "@/lib/cms/anunturi";
 
 export function usePageContentEditor(pageId) {

@@ -19,7 +19,7 @@ import {
   SITE_SETTINGS_COLLECTION,
   EMPTY_SITE_SETTINGS,
 } from "@/lib/cms/site-settings";
-import { revalidateSitePages } from "@/lib/cms/site-settings-server";
+import { revalidateSitePages } from "@/lib/cms/site-settings-revalidate";
 import { logActivity } from "@/lib/cms/anunturi";
 import { isAdminRole } from "@/lib/cms/constants";
 import { useAdminMessageToast } from "@/components/admin/AdminToast";

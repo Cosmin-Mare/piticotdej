@@ -3,14 +3,18 @@ import GalerieGrid from "@/components/GalerieGrid";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicGaleriePoze } from "@/lib/cms/public-data";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("galerie");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Galerie() {
-  const { hero } = await fetchPageContentServer("galerie");
-  const photos = await getPublicGaleriePoze();
+  const [content, photos] = await Promise.all([
+    fetchPageContentServer("galerie"),
+    getPublicGaleriePoze(),
+  ]);
+  const { hero } = content;
 
   return (
     <>

@@ -3,10 +3,11 @@ import Icon from "@/components/Icon";
 import culture from "@/public/img/p7.jpg";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("activitati");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Activitati() {
   const { hero, domains, extrasHead, extras, eventsHead, events } = await fetchPageContentServer("activitati");

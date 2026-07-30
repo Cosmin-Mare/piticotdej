@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
 import { sanitizeFormNoteHtml } from "@/lib/sanitize";
 
@@ -58,14 +57,6 @@ export default function ContactForm({ site, page }) {
 
   return (
     <>
-      <PageHero
-        crumb="Contact"
-        crumbPath="/contact"
-        kicker={page.hero.kicker}
-        title={page.hero.title}
-        lead={page.hero.lead}
-      />
-
       <section className="section">
         <div className="container contact-grid">
           <div className="reveal">

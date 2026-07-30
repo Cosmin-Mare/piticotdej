@@ -1,13 +1,14 @@
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicConducereLeaders, getPublicMembriConsiliu } from "@/lib/cms/public-data";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("conducere");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Conducere() {
   const [leaders, councilFromDb, pageContent] = await Promise.all([
@@ -35,7 +36,7 @@ export default async function Conducere() {
               <article key={l.role || l.name} className="lead-card reveal">
                 {l.image ? (
                   <div className="lead-avatar lead-avatar-photo">
-                    <Image src={l.image} alt={l.name} width={80} height={80} />
+                    <CmsImage src={l.image} alt={l.name} width={80} height={80} sizes="80px" />
                   </div>
                 ) : (
                   <div className="lead-avatar">{l.initials || l.name?.charAt(0)}</div>
@@ -83,7 +84,7 @@ export default async function Conducere() {
                 <span className="ca-member">
                   {c.image ? (
                     <span className="ca-avatar">
-                      <Image src={c.image} alt={c.name} width={36} height={36} />
+                      <CmsImage src={c.image} alt={c.name} width={36} height={36} sizes="36px" />
                     </span>
                   ) : null}
                   {c.name}

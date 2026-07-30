@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
+import CmsImage from "@/components/CmsImage";
 import { getSiteConfig } from "@/lib/content";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import {
@@ -9,21 +10,25 @@ import {
   getPublicHomeTestimonialsWithFallback,
   getPublicGaleriePoze,
 } from "@/lib/cms/public-data";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 import hero from "@/public/img/hands.jpg";
 import building from "@/public/img/building.jpg";
 import p13 from "@/public/img/p13.jpg";
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Home() {
-  const site = await getSiteConfig();
-  const content = await fetchPageContentServer("acasa");
+  const [site, content, groups, day, testimonials, galleryAll] = await Promise.all([
+    getSiteConfig(),
+    fetchPageContentServer("acasa"),
+    getPublicHomeGroups(),
+    getPublicHomeDay(),
+    getPublicHomeTestimonialsWithFallback(),
+    getPublicGaleriePoze(),
+  ]);
   const { hero: heroContent, intro, sediiHead, sedii, sediiFootnote, featuresHead, features, sectiuni, cta } = content;
-  const groups = await getPublicHomeGroups();
-  const day = await getPublicHomeDay();
-  const testimonials = await getPublicHomeTestimonialsWithFallback();
-  const galleryPhotos = (await getPublicGaleriePoze()).slice(0, 4);
+  const galleryPhotos = galleryAll.slice(0, 4);
   const titleBefore = heroContent.title.replace(heroContent.titleEmphasis, "").trim();
 
   return (
@@ -56,7 +61,13 @@ export default async function Home() {
 
           <div className="hero-media">
             <div className="photo hero-photo">
-              <Image src={hero} alt="Copil bucuros la Grădinița Piticot Dej" priority placeholder="blur" />
+              <Image
+                src={hero}
+                alt="Copil bucuros la Grădinița Piticot Dej"
+                priority
+                placeholder="blur"
+                sizes="(max-width:940px) 92vw, 560px"
+              />
             </div>
             <div className="hero-badge">
               <span className="ico sage" style={{ margin: 0, width: 44, height: 44, borderRadius: 12 }}>
@@ -76,10 +87,20 @@ export default async function Home() {
         <div className="container intro-grid">
           <div className="intro-media reveal">
             <div className="photo im-main">
-              <Image src={building} alt="Clădirea Grădiniței Piticot Dej" />
+              <Image
+                src={building}
+                alt="Clădirea Grădiniței Piticot Dej"
+                placeholder="blur"
+                sizes="(max-width:940px) 92vw, 480px"
+              />
             </div>
             <div className="photo im-sub">
-              <Image src={p13} alt="Sală de grupă la Grădinița Piticot Dej" />
+              <Image
+                src={p13}
+                alt="Sală de grupă la Grădinița Piticot Dej"
+                placeholder="blur"
+                sizes="(max-width:940px) 48vw, 260px"
+              />
             </div>
           </div>
           <div className="reveal">
@@ -182,7 +203,7 @@ export default async function Home() {
                 key={`${p.src}-${i}`}
                 className={`photo${i === 0 ? " gs-tall" : ""}${i === galleryPhotos.length - 1 && galleryPhotos.length >= 3 ? " gs-wide" : ""}`}
               >
-                <Image src={p.src} alt={p.label || "Fotografie Grădinița Piticot Dej"} width={640} height={480} sizes="(max-width:600px) 50vw, 33vw" />
+                <CmsImage src={p.src} alt={p.label || "Fotografie Grădinița Piticot Dej"} width={640} height={480} sizes="(max-width:600px) 50vw, 33vw" />
               </div>
             ))}
           </div>

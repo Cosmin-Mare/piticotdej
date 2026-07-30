@@ -3,14 +3,17 @@ import Icon from "@/components/Icon";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicDocumenteGrouped } from "@/lib/cms/public-data";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("documente");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Documente() {
-  const page = await fetchPageContentServer("documente");
-  const groups = await getPublicDocumenteGrouped();
+  const [page, groups] = await Promise.all([
+    fetchPageContentServer("documente"),
+    getPublicDocumenteGrouped(),
+  ]);
   const hasRealLinks = groups.some((g) => g.docs.some((d) => d.href && d.href !== "#"));
 
   return (

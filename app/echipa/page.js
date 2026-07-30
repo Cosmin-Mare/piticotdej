@@ -1,17 +1,21 @@
-import Image from "next/image";
 import PageHero from "@/components/PageHero";
 import Icon from "@/components/Icon";
+import CmsImage from "@/components/CmsImage";
 import { fetchPageContentServer } from "@/lib/cms/page-content-server";
 import { getPublicEchipaTeam } from "@/lib/cms/public-data";
 import { pageMetadata } from "@/lib/seo";
+import { REVALIDATE } from "@/lib/cms/isr";
 
 export const metadata = pageMetadata("echipa");
 
-export const revalidate = 60;
+export const revalidate = REVALIDATE;
 
 export default async function Echipa() {
-  const team = await getPublicEchipaTeam();
-  const { hero, stats, supportHead, support } = await fetchPageContentServer("echipa");
+  const [team, content] = await Promise.all([
+    getPublicEchipaTeam(),
+    fetchPageContentServer("echipa"),
+  ]);
+  const { hero, stats, supportHead, support } = content;
 
   return (
     <>
@@ -30,7 +34,7 @@ export default async function Echipa() {
               <article key={i} className="member reveal" style={{ transitionDelay: `${i * 50}ms` }}>
                 <div className="m-photo" style={t.image ? undefined : { background: t.color }}>
                   {t.image ? (
-                    <Image src={t.image} alt={t.name} width={400} height={150} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <CmsImage src={t.image} alt={t.name} width={400} height={150} sizes="(max-width:600px) 100vw, 33vw" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : (
                     <Icon name="users" size={42} />
                   )}

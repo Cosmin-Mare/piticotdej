@@ -19,7 +19,15 @@ export default function PageHero({ kicker, title, lead, crumb, crumbPath, image,
               {lead && <p className="lead">{lead}</p>}
             </div>
             <div className="photo ph-photo">
-              <Image src={image} alt={imageAlt || title} width={620} height={465} />
+              <Image
+                src={image}
+                alt={imageAlt || title}
+                width={620}
+                height={465}
+                sizes="(max-width:940px) 92vw, 520px"
+                priority
+                placeholder={typeof image === "object" ? "blur" : undefined}
+              />
             </div>
           </div>
         ) : (

@@ -37,8 +37,9 @@
   --radius-pill: 999px;
 
   --maxw: 1200px;
-  --font-display: var(--font-display), Georgia, serif;
-  --font-body: var(--font-body), system-ui, sans-serif;
+  /* --font-display / --font-body are set by next/font on <html> (variable classes).
+     Do NOT reassign them here — `var(--font-display)` self-references are circular
+     and invalidate the custom properties at computed-value time. */
 }
 
 * { box-sizing: border-box; }

@@ -4,13 +4,12 @@ import { getSiteConfig } from "@/lib/content";
 import { buildSiteMetadata } from "@/lib/seo";
 
 /**
- * Display: 400 normal + italic only (dropped 500).
- * preload:false — hero LCP is the photo; fonts swap in via CSS and we avoid
- * 4–6 competing woff2 preloads (latin + latin-ext × styles).
+ * Display: 400 + 500 (UI still uses weight 500 on headings/labels).
+ * preload:false — hero LCP is the photo; Fraunces can swap in after first paint.
  */
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
-  weight: ["400"],
+  weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
@@ -19,15 +18,15 @@ const fraunces = Fraunces({
 });
 
 /**
- * Body: 400 + 600 only (dropped 500). Same preload:false rationale —
- * size/weight cut still applies; CSS @font-face loads what the page needs.
+ * Body/nav: 400 + 500 + 600. Preload the critical face so navbar/body
+ * avoid a long FOUT; Fraunces stays non-preloaded to protect LCP.
  */
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "600"],
+  weight: ["400", "500", "600"],
   variable: "--font-body",
   display: "swap",
-  preload: false,
+  preload: true,
   adjustFontFallback: true,
 });
 

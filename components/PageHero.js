@@ -25,6 +25,7 @@ export default function PageHero({ kicker, title, lead, crumb, crumbPath, image,
                 width={620}
                 height={465}
                 sizes="(max-width:940px) 92vw, 520px"
+                quality={70}
                 priority
                 placeholder={typeof image === "object" ? "blur" : undefined}
               />

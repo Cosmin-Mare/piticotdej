@@ -38,6 +38,7 @@ export default function GalerieGrid({ photos }) {
               width={640}
               height={480}
               sizes="(max-width:480px) 100vw, (max-width:820px) 50vw, 33vw"
+              quality={70}
               loading={i < 3 ? "eager" : "lazy"}
             />
             <figcaption>{p.label}</figcaption>
@@ -55,7 +56,7 @@ export default function GalerieGrid({ photos }) {
 
       <style jsx>{`
         .filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 44px; }
-        .filter { font-weight: 500; font-size: 0.92rem; padding: 10px 22px; border-radius: var(--radius-pill); border: 1.5px solid var(--line-strong); background: #fff; color: var(--ink-soft); cursor: pointer; transition: 0.18s; }
+        .filter { font-weight: 600; font-size: 0.92rem; padding: 10px 22px; border-radius: var(--radius-pill); border: 1.5px solid var(--line-strong); background: #fff; color: var(--ink-soft); cursor: pointer; transition: 0.18s; }
         .filter:hover { border-color: var(--clay); color: var(--clay-deep); }
         .filter.on { background: var(--ink); border-color: var(--ink); color: #fff; }
         .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }

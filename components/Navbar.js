@@ -116,7 +116,7 @@ export default function Navbar() {
         .nav-item { position: relative; }
         :global(.nav-link) {
           font-family: var(--font-body);
-          font-weight: 500;
+          font-weight: 600;
           font-size: 0.92rem;
           color: var(--ink-soft);
           padding: 10px 16px;
@@ -166,7 +166,7 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           gap: 12px;
-          font-weight: 500;
+          font-weight: 600;
           font-size: 0.9rem;
           color: var(--ink-soft);
           padding: 9px 12px;

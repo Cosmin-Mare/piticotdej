@@ -66,6 +66,7 @@ export default async function Home() {
                 alt="Copil bucuros la Grădinița Piticot Dej"
                 priority
                 placeholder="blur"
+                quality={70}
                 sizes="(max-width:940px) 92vw, 560px"
               />
             </div>
@@ -91,6 +92,7 @@ export default async function Home() {
                 src={building}
                 alt="Clădirea Grădiniței Piticot Dej"
                 placeholder="blur"
+                quality={70}
                 sizes="(max-width:940px) 92vw, 480px"
               />
             </div>
@@ -99,6 +101,7 @@ export default async function Home() {
                 src={p13}
                 alt="Sală de grupă la Grădinița Piticot Dej"
                 placeholder="blur"
+                quality={70}
                 sizes="(max-width:940px) 48vw, 260px"
               />
             </div>
@@ -203,7 +206,7 @@ export default async function Home() {
                 key={`${p.src}-${i}`}
                 className={`photo${i === 0 ? " gs-tall" : ""}${i === galleryPhotos.length - 1 && galleryPhotos.length >= 3 ? " gs-wide" : ""}`}
               >
-                <CmsImage src={p.src} alt={p.label || "Fotografie Grădinița Piticot Dej"} width={640} height={480} sizes="(max-width:600px) 50vw, 33vw" />
+                <CmsImage src={p.src} alt={p.label || "Fotografie Grădinița Piticot Dej"} width={640} height={480} sizes="(max-width:600px) 50vw, 33vw" quality={70} />
               </div>
             ))}
           </div>
